@@ -1,0 +1,72 @@
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+  goconst:
+    min-len: 2
+    min-occurrences: 3
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+  govet:
+    check-shadowing: true
+    disable:
+      - fieldalignment # too strict
+
+  nolintlint:
+    require-explanation: false
+    require-specific: true
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    # - deadcode
+    # depguard needs to be reviewed properly and then configured, before
+    # it can be re-enabled.
+    # https://github.com/OpenPeeDeeP/depguard#example-configs
+    # - depguard
+    - dogsled
+    # - dupl
+    - errcheck
+    - exportloopref
+    - exhaustive
+    - goconst
+    - gocritic
+    - gofmt
+    - goimports
+    - gomnd
+    - gocyclo
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - nolintlint
+    - nakedret
+    - prealloc
+    - predeclared
+    - revive
+    - staticcheck
+    # - structcheck
+    - stylecheck
+    - thelper
+    - tparallel
+    - unconvert
+    - unparam
+    # - varcheck
+    - whitespace
+    - wsl
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  fix: true
+  exclude:
+    - "cuddle"
+
+run:
+  issues-exit-code: 1
+  timeout: "5m"
