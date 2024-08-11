@@ -1,4 +1,4 @@
-name: Astrolib Continuous Integration
+name: Pants Continuous Integration
 on:
   push:
 

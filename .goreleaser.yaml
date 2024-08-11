@@ -5,7 +5,7 @@ before:
     # - go mod generate
 
 builds:
-  - id: "astrolib"
+  - id: "pants"
     env:
       - CGO_ENABLED=0
     goos:
