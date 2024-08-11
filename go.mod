@@ -1,4 +1,4 @@
-module github.com/snivilised/astrolib
+module github.com/snivilised/pants
 
 go 1.22.0
 
