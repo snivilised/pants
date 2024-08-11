@@ -26,7 +26,7 @@ tasks:
 
   ti:
     cmds:
-      - go test ./i18n
+      - go test ./locale
 
   dry:
     cmds:
@@ -72,7 +72,7 @@ tasks:
 
   watchvi:
     cmds:
-      - ginkgo watch -v -r -p ./i18n
+      - ginkgo watch -v -r -p ./locale
 
   watch:
     cmds:
@@ -105,7 +105,7 @@ tasks:
 
   clear:
     cmds:
-      - rm ./i18n/out/* --recursive
+      - rm ./locale/out/* --recursive
 
   # extract i18m messages
   extract:
@@ -113,13 +113,13 @@ tasks:
       - goi18n extract
         -format json
         -sourceLanguage "en-GB"
-        -outdir ./i18n/out/l10n
+        -outdir ./locale/out/l10n
 
   # new translation
   newt:
     deps: [extract]
     cmds:
-      - touch ./i18n/out/l10n/translate.en-US.json
+      - touch ./locale/out/l10n/translate.en-US.json
 
   # derive a translation from the default
   merge:
@@ -127,22 +127,22 @@ tasks:
       - goi18n merge
         -format json
         -sourceLanguage "en-GB"
-        -outdir ./i18n/out
-        ./i18n/out/active.en-GB.json ./i18n/out/l10n/translate.en-US.json
+        -outdir ./locale/out
+        ./locale/out/active.en-GB.json ./locale/out/l10n/translate.en-US.json
 
   # update existing translations
   # after running this task, the translation file generated will
   # contain only the new translations. Update the active file,
   # with the new translations. Also, need to copy the default
-  # file (active.en-GB.json) back into ./i18n/default
+  # file (active.en-GB.json) back into ./locale/default
   update:
     deps: [extract]
     cmds:
       - goi18n merge
         -format json
         -sourceLanguage "en-GB"
-        -outdir ./i18n/out
-        ./i18n/out/active.en-GB.json ./i18n/deploy/active.en-US.json
+        -outdir ./locale/out
+        ./locale/out/active.en-GB.json ./locale/deploy/active.en-US.json
 
   # run this after manual translation has occurred to integrate it
   # back into the translation file. Unfortunately, this task doesn't
@@ -154,5 +154,5 @@ tasks:
       - goi18n merge
         -format json
         -sourceLanguage "en-US"
-        -outdir ./i18n/temp
-        ./i18n/out/translate.en-US.json ./i18n/deploy/active.en-US.json
+        -outdir ./locale/temp
+        ./locale/out/translate.en-US.json ./locale/deploy/active.en-US.json
