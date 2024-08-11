@@ -1,4 +1,4 @@
-package i18n
+package locale
 
 import (
 	"github.com/snivilised/extendio/i18n"
