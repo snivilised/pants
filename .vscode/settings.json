@@ -8,6 +8,7 @@
     "astrolib",
     "Berthe",
     "bodyclose",
+    "Clonable",
     "cmds",
     "coverpkg",
     "coverprofile",

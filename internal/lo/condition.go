@@ -20,131 +20,131 @@ func TernaryF[T any](condition bool, ifFunc, elseFunc func() T) T {
 	return elseFunc()
 }
 
-type IfElse[T any] struct {
-	result T
-	done   bool
-}
+// type IfElse[T any] struct {
+// 	result T
+// 	done   bool
+// }
 
 // If
 // Play: https://go.dev/play/p/WSw3ApMxhyW
-func If[T any](condition bool, result T) *IfElse[T] {
-	if condition {
-		return &IfElse[T]{result, true}
-	}
+// func If[T any](condition bool, result T) *IfElse[T] {
+// 	if condition {
+// 		return &IfElse[T]{result, true}
+// 	}
 
-	var t T
-	return &IfElse[T]{t, false}
-}
+// 	var t T
+// 	return &IfElse[T]{t, false}
+// }
 
 // IfF
 // Play: https://go.dev/play/p/WSw3ApMxhyW
-func IfF[T any](condition bool, resultF func() T) *IfElse[T] {
-	if condition {
-		return &IfElse[T]{resultF(), true}
-	}
+// func IfF[T any](condition bool, resultF func() T) *IfElse[T] {
+// 	if condition {
+// 		return &IfElse[T]{resultF(), true}
+// 	}
 
-	var t T
-	return &IfElse[T]{t, false}
-}
+// 	var t T
+// 	return &IfElse[T]{t, false}
+// }
 
 // ElseIf
 // Play: https://go.dev/play/p/WSw3ApMxhyW
-func (i *IfElse[T]) ElseIf(condition bool, result T) *IfElse[T] {
-	if !i.done && condition {
-		i.result = result
-		i.done = true
-	}
+// func (i *IfElse[T]) ElseIf(condition bool, result T) *IfElse[T] {
+// 	if !i.done && condition {
+// 		i.result = result
+// 		i.done = true
+// 	}
 
-	return i
-}
+// 	return i
+// }
 
 // ElseIfF
 // Play: https://go.dev/play/p/WSw3ApMxhyW
-func (i *IfElse[T]) ElseIfF(condition bool, resultF func() T) *IfElse[T] {
-	if !i.done && condition {
-		i.result = resultF()
-		i.done = true
-	}
+// func (i *IfElse[T]) ElseIfF(condition bool, resultF func() T) *IfElse[T] {
+// 	if !i.done && condition {
+// 		i.result = resultF()
+// 		i.done = true
+// 	}
 
-	return i
-}
+// 	return i
+// }
 
 // Else
 // Play: https://go.dev/play/p/WSw3ApMxhyW
-func (i *IfElse[T]) Else(result T) T {
-	if i.done {
-		return i.result
-	}
+// func (i *IfElse[T]) Else(result T) T {
+// 	if i.done {
+// 		return i.result
+// 	}
 
-	return result
-}
+// 	return result
+// }
 
 // ElseF
 // Play: https://go.dev/play/p/WSw3ApMxhyW
-func (i *IfElse[T]) ElseF(resultF func() T) T {
-	if i.done {
-		return i.result
-	}
+// func (i *IfElse[T]) ElseF(resultF func() T) T {
+// 	if i.done {
+// 		return i.result
+// 	}
 
-	return resultF()
-}
+// 	return resultF()
+// }
 
-type SwitchCase[T comparable, R any] struct {
-	predicate T
-	result    R
-	done      bool
-}
+// type SwitchCase[T comparable, R any] struct {
+// 	predicate T
+// 	result    R
+// 	done      bool
+// }
 
 // Switch is a pure functional switch/case/default statement.
 // Play: https://go.dev/play/p/TGbKUMAeRUd
-func Switch[T comparable, R any](predicate T) *SwitchCase[T, R] {
-	var result R
+// func Switch[T comparable, R any](predicate T) *SwitchCase[T, R] {
+// 	var result R
 
-	return &SwitchCase[T, R]{
-		predicate,
-		result,
-		false,
-	}
-}
+// 	return &SwitchCase[T, R]{
+// 		predicate,
+// 		result,
+// 		false,
+// 	}
+// }
 
 // Case
 // Play: https://go.dev/play/p/TGbKUMAeRUd
-func (s *SwitchCase[T, R]) Case(val T, result R) *SwitchCase[T, R] {
-	if !s.done && s.predicate == val {
-		s.result = result
-		s.done = true
-	}
+// func (s *SwitchCase[T, R]) Case(val T, result R) *SwitchCase[T, R] {
+// 	if !s.done && s.predicate == val {
+// 		s.result = result
+// 		s.done = true
+// 	}
 
-	return s
-}
+// 	return s
+// }
 
 // CaseF
 // Play: https://go.dev/play/p/TGbKUMAeRUd
-func (s *SwitchCase[T, R]) CaseF(val T, cb func() R) *SwitchCase[T, R] {
-	if !s.done && s.predicate == val {
-		s.result = cb()
-		s.done = true
-	}
+// func (s *SwitchCase[T, R]) CaseF(val T, cb func() R) *SwitchCase[T, R] {
+// 	if !s.done && s.predicate == val {
+// 		s.result = cb()
+// 		s.done = true
+// 	}
 
-	return s
-}
+// 	return s
+// }
 
 // Default
 // Play: https://go.dev/play/p/TGbKUMAeRUd
-func (s *SwitchCase[T, R]) Default(result R) R {
-	if !s.done {
-		s.result = result
-	}
+// func (s *SwitchCase[T, R]) Default(result R) R {
+// 	if !s.done {
+// 		s.result = result
+// 	}
 
-	return s.result
-}
+// 	return s.result
+// }
 
 // DefaultF
 // Play: https://go.dev/play/p/TGbKUMAeRUd
-func (s *SwitchCase[T, R]) DefaultF(cb func() R) R {
-	if !s.done {
-		s.result = cb()
-	}
+// func (s *SwitchCase[T, R]) DefaultF(cb func() R) R {
+// 	if !s.done {
+// 		s.result = cb()
+// 	}
 
-	return s.result
-}
+// 	return s.result
+// }
