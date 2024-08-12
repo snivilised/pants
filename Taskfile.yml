@@ -12,6 +12,7 @@ silent: true
 dotenv: [".env"]
 
 tasks:
+
   # === build ================================================
 
   b:
@@ -60,17 +61,72 @@ tasks:
     cmds:
       - ginkgo generate {{.CLI_ARGS}}
 
+  # NB: this clean task is very aggressive. It will not only remove
+  # old versions of packages, it removes all of them, even the
+  # current versions in use. You can use the download task to
+  # refresh the pkg cache.
+  #
+  clean:
+    cmds:
+      - go clean
+
+  clean-t:
+    cmds:
+      - go clean -testcache
+
+  # === test =================================================
+
+  t:
+    cmds:
+      - ginkgo -p ./...
+
+  ta:
+    cmds:
+      - ginkgo -p ./internal/ants
+
+  tl:
+    cmds:
+      - go test ./locale
+
+  dry:
+    cmds:
+      - ginkgo -v --dry-run ./...
+
+  # === ginkgo ================================================
+
+  # initialise a test suite for a package. (only 1 per package)
+  boot:
+    cmds:
+      - ginkgo bootstrap
+
+  # run tests suites recursive
+  g:
+    cmds:
+      - ginkgo -p -r
+
+  # invoke as task gen -- <item>
+  gl:
+    cmds:
+      - ginkgo -p -r --label-filter={{.CLI_ARGS}}
+
+  # run tests suites recursive with verbose
+  gv:
+    cmds:
+      - ginkgo -p -r -v
+
+  # generate a test file for the item provided (item_test.go)
+  # invoke as task gen -- <item>
+  gen:
+    cmds:
+      - ginkgo generate {{.CLI_ARGS}}
+
   # === watch ================================================
 
   watchv:
     cmds:
       - ginkgo watch -v -r -p ./...
 
-  watchvc:
-    cmds:
-      - ginkgo watch -v -r -p ./collections
-
-  watchvi:
+  watchvl:
     cmds:
       - ginkgo watch -v -r -p ./locale
 

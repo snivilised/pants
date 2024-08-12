@@ -4,7 +4,9 @@
     "--fast"
   ],
   "cSpell.words": [
+    "Alloc",
     "astrolib",
+    "Berthe",
     "bodyclose",
     "cmds",
     "coverpkg",
@@ -12,6 +14,7 @@
     "cubiest",
     "deadcode",
     "depguard",
+    "Dietoad",
     "dogsled",
     "dotenv",
     "dupl",
@@ -35,11 +38,14 @@
     "graffico",
     "ineffassign",
     "jibberjabber",
+    "leaktest",
     "linters",
+    "Malloc",
     "mattn",
     "nakedret",
     "nolint",
     "nolintlint",
+    "Nonblocking",
     "onsi",
     "outdir",
     "pixa",
@@ -52,6 +58,7 @@
     "structcheck",
     "stylecheck",
     "Taskfile",
+    "testcache",
     "thelper",
     "tparallel",
     "typecheck",
@@ -60,6 +67,7 @@
     "varcheck",
     "watchv",
     "watchvc",
-    "watchvi"
+    "watchvi",
+    "watchvl"
   ]
 }
