@@ -152,10 +152,15 @@ tasks:
 
   cover:
     cmds:
+      - mkdir -p ./coverage
+      - mkdir -p ./internal/ants/coverage
+      - mkdir -p ./locale/coverage
       - ginkgo --json-report
         ./ginkgo.report
         -coverpkg=./...
         -coverprofile=./coverage/coverage.out -r
+      - go tool cover -html=./coverage/coverage.out -o ./coverage/coverage.html
+      - open ./coverage/coverage.html
 
   # === i18n =================================================
 
