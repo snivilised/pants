@@ -159,7 +159,7 @@ func NewPoolWithFunc(ctx context.Context,
 
 	p := &PoolWithFunc{
 		workerPool: workerPool{
-			capacity: int32(size),
+			capacity: int32(size), //nolint:gosec // ok
 			lock:     async.NewSpinLock(),
 			o:        opts,
 		},
@@ -172,7 +172,7 @@ func NewPoolWithFunc(ctx context.Context,
 		}
 	}
 	if p.o.PreAlloc {
-		p.workers = newWorkerQueue(queueTypeLoopQueue, int(size))
+		p.workers = newWorkerQueue(queueTypeLoopQueue, int(size)) //nolint:gosec // ok
 	} else {
 		p.workers = newWorkerQueue(queueTypeStack, 0)
 	}

@@ -76,7 +76,7 @@ func (p *workerPool) Tune(size int) {
 	if capacity == -1 || size <= 0 || size == capacity || p.o.PreAlloc {
 		return
 	}
-	atomic.StoreInt32(&p.capacity, int32(size))
+	atomic.StoreInt32(&p.capacity, int32(size)) //nolint:gosec // ok
 	if size > capacity {
 		if size-capacity == 1 {
 			p.cond.Signal()
@@ -136,11 +136,11 @@ func (p *workerPool) ReleaseTimeout(ctx context.Context, timeout time.Duration) 
 }
 
 func (p *workerPool) addRunning(delta int) {
-	atomic.AddInt32(&p.running, int32(delta))
+	atomic.AddInt32(&p.running, int32(delta)) //nolint:gosec // ok
 }
 
 func (p *workerPool) addWaiting(delta int) {
-	atomic.AddInt32(&p.waiting, int32(delta))
+	atomic.AddInt32(&p.waiting, int32(delta)) //nolint:gosec // ok
 }
 
 func (p *workerPool) GetOptions() *Options {

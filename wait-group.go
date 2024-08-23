@@ -27,7 +27,7 @@ type TrackableWaitGroup struct {
 
 // Add
 func (t *TrackableWaitGroup) Add(delta int) {
-	n := atomic.AddInt32(&t.counter, int32(delta))
+	n := atomic.AddInt32(&t.counter, int32(delta)) //nolint:gosec // ok
 	t.wg.Add(delta)
 	t.add(n)
 }
