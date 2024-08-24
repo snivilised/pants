@@ -30,6 +30,7 @@ import (
 	"time"
 
 	"github.com/snivilised/pants/internal/ants/async"
+	"github.com/snivilised/pants/locale"
 )
 
 // Pool accepts the tasks and process them concurrently,
@@ -140,7 +141,7 @@ func NewPool(ctx context.Context, options ...Option) (*Pool, error) {
 
 	if !opts.DisablePurge {
 		if expiry := opts.ExpiryDuration; expiry < 0 {
-			return nil, ErrInvalidPoolExpiry
+			return nil, locale.ErrInvalidPoolExpiry
 		} else if expiry == 0 {
 			opts.ExpiryDuration = DefaultCleanIntervalTime
 		}
@@ -188,7 +189,7 @@ func NewPool(ctx context.Context, options ...Option) (*Pool, error) {
 // a Pool with ants.WithNonblocking(true).
 func (p *Pool) Submit(ctx context.Context, task TaskFunc) error {
 	if p.IsClosed() {
-		return ErrPoolClosed
+		return locale.ErrPoolClosed
 	}
 
 	w, err := p.retrieveWorker()
@@ -239,7 +240,7 @@ retry:
 	if p.o.Nonblocking || exceeded {
 		p.lock.Unlock()
 
-		return nil, ErrPoolOverload
+		return nil, locale.ErrPoolOverload
 	}
 
 	// Otherwise, we'll have to keep them blocked and wait for at least one
@@ -251,7 +252,7 @@ retry:
 	if p.IsClosed() {
 		p.lock.Unlock()
 
-		return nil, ErrPoolClosed
+		return nil, locale.ErrPoolClosed
 	}
 
 	goto retry

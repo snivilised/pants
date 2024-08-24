@@ -3,8 +3,8 @@ package helpers
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
 
@@ -43,8 +43,11 @@ func Root() string {
 }
 
 func Repo(relative string) string {
-	_, filename, _, _ := runtime.Caller(0) //nolint:dogsled // ignore
-	return Path(filepath.Dir(filename), relative)
+	cmd := exec.Command("git", "rev-parse", "--show-toplevel")
+	output, _ := cmd.Output()
+	repo := strings.TrimSpace(string(output))
+
+	return Path(repo, relative)
 }
 
 func Log() string {

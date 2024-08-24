@@ -2,17 +2,50 @@ package pants_test
 
 import (
 	"context"
+	"fmt"
+	"os"
 	"sync"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2" //nolint:revive // ginkgo ok
 	. "github.com/onsi/gomega"    //nolint:revive // gomega ok
 
+	"github.com/snivilised/li18ngo"
 	"github.com/snivilised/pants"
-	"github.com/snivilised/pants/internal/ants"
+	"github.com/snivilised/pants/internal/helpers"
+	"github.com/snivilised/pants/locale"
 )
 
-var _ = Describe("WorkerPoolTask", func() {
+var _ = Describe("WorkerPoolTask", Ordered, func() {
+	var (
+		repo                string
+		l10nPath            string
+		testTranslationFile li18ngo.TranslationFiles
+	)
+
+	BeforeAll(func() {
+		repo = helpers.Repo("")
+		l10nPath = helpers.Path(repo, "test/data/l10n")
+
+		_, err := os.Stat(l10nPath)
+		Expect(err).To(Succeed(),
+			fmt.Sprintf("l10n '%v' path does not exist", l10nPath),
+		)
+
+		testTranslationFile = li18ngo.TranslationFiles{
+			li18ngo.Li18ngoSourceID: li18ngo.TranslationSource{Name: "test"},
+		}
+	})
+
+	BeforeEach(func() {
+		if err := li18ngo.Use(func(o *li18ngo.UseOptions) {
+			o.Tag = li18ngo.DefaultLanguage
+			o.From.Sources = testTranslationFile
+		}); err != nil {
+			Fail(err.Error())
+		}
+	})
+
 	Context("ants", func() {
 		When("NonBlocking", func() {
 			It("should: not fail", func(specCtx SpecContext) {
@@ -47,7 +80,8 @@ var _ = Describe("WorkerPoolTask", func() {
 				Expect(pool.Post(ctx, fn)).To(Succeed(),
 					"nonblocking submit when pool is not full shouldn't return error",
 				)
-				Expect(pool.Post(ctx, demoFunc)).To(MatchError(ants.ErrPoolOverload.Error()),
+				Expect(pool.Post(ctx, demoFunc)).To(
+					MatchError(locale.ErrPoolOverload.Error()),
 					"nonblocking submit when pool is full should get an ErrPoolOverload",
 				)
 				// interrupt fn to get an available worker
@@ -105,7 +139,8 @@ var _ = Describe("WorkerPoolTask", func() {
 				time.Sleep(1 * time.Second)
 
 				// already reached max blocking limit
-				Expect(pool.Post(ctx, demoFunc)).To(MatchError(ants.ErrPoolOverload.Error()),
+				Expect(pool.Post(ctx, demoFunc)).To(
+					MatchError(locale.ErrPoolOverload.Error()),
 					"blocking submit when pool reach max blocking submit should return ErrPoolOverload",
 				)
 

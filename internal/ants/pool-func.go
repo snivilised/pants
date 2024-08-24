@@ -30,6 +30,7 @@ import (
 	"time"
 
 	"github.com/snivilised/pants/internal/ants/async"
+	"github.com/snivilised/pants/locale"
 )
 
 // PoolWithFunc accepts the tasks and process them concurrently,
@@ -135,7 +136,7 @@ func NewPoolWithFunc(ctx context.Context,
 	options ...Option,
 ) (*PoolWithFunc, error) {
 	if pf == nil {
-		return nil, ErrLackPoolFunc
+		return nil, locale.ErrLackPoolFunc
 	}
 
 	opts := NewOptions(options...)
@@ -147,7 +148,7 @@ func NewPoolWithFunc(ctx context.Context,
 
 	if !opts.DisablePurge {
 		if expiry := opts.ExpiryDuration; expiry < 0 {
-			return nil, ErrInvalidPoolExpiry
+			return nil, locale.ErrInvalidPoolExpiry
 		} else if expiry == 0 {
 			opts.ExpiryDuration = DefaultCleanIntervalTime
 		}
@@ -193,7 +194,7 @@ func NewPoolWithFunc(ctx context.Context,
 // you should instantiate a PoolWithFunc with ants.WithNonblocking(true).
 func (p *PoolWithFunc) Invoke(ctx context.Context, job InputParam) error {
 	if p.IsClosed() {
-		return ErrPoolClosed
+		return locale.ErrPoolClosed
 	}
 
 	w, err := p.retrieveWorker()
@@ -242,7 +243,7 @@ retry:
 	if p.o.Nonblocking || exceeded {
 		p.lock.Unlock()
 
-		return nil, ErrPoolOverload
+		return nil, locale.ErrPoolOverload
 	}
 
 	// Otherwise, we'll have to keep them blocked and wait for at least one worker
@@ -254,7 +255,7 @@ retry:
 	if p.IsClosed() {
 		p.lock.Unlock()
 
-		return nil, ErrPoolClosed
+		return nil, locale.ErrPoolClosed
 	}
 
 	goto retry

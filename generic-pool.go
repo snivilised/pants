@@ -2,11 +2,11 @@ package pants
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/snivilised/pants/internal/ants"
 	"github.com/snivilised/pants/internal/lo"
+	"github.com/snivilised/pants/locale"
 )
 
 // functionalPool
@@ -130,7 +130,9 @@ func fromOutputInfo[O any](o *Options, oi *outputInfo[O]) *outputInfoW[O] {
 	}
 }
 
-func respond[O any](ctx context.Context, wi *outputInfoW[O], output *JobOutput[O]) (err error) {
+func respond[O any](ctx context.Context,
+	wi *outputInfoW[O], output *JobOutput[O],
+) (err error) {
 	select {
 	case wi.outputCh <- *output:
 		return nil
@@ -139,7 +141,7 @@ func respond[O any](ctx context.Context, wi *outputInfoW[O], output *JobOutput[O
 		case <-ctx.Done():
 			err = ctx.Err()
 		case wi.cancelCh <- CancelWorkSignal{}:
-			err = errors.New("timeout")
+			err = locale.ErrTimeout
 		}
 
 	case <-ctx.Done():

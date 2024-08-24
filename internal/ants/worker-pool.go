@@ -5,6 +5,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/snivilised/pants/locale"
 )
 
 type workerPool struct {
@@ -118,7 +120,7 @@ func (p *workerPool) Release(ctx context.Context) {
 func (p *workerPool) ReleaseTimeout(ctx context.Context, timeout time.Duration) error {
 	purge := (!p.o.DisablePurge && p.stopPurge == nil)
 	if p.IsClosed() || purge || p.stopTicktock == nil {
-		return ErrPoolClosed
+		return locale.ErrPoolClosed
 	}
 	p.Release(ctx)
 
@@ -132,7 +134,7 @@ func (p *workerPool) ReleaseTimeout(ctx context.Context, timeout time.Duration) 
 		time.Sleep(releaseTimeoutInterval * time.Millisecond)
 	}
 
-	return ErrTimeout
+	return locale.ErrTimeout
 }
 
 func (p *workerPool) addRunning(delta int) {
