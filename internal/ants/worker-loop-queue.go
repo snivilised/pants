@@ -25,6 +25,8 @@ package ants
 import (
 	"context"
 	"time"
+
+	"github.com/snivilised/pants/locale"
 )
 
 type loopQueue struct {
@@ -65,11 +67,11 @@ func (wq *loopQueue) isEmpty() bool {
 
 func (wq *loopQueue) insert(w worker) error {
 	if wq.size == 0 {
-		return errQueueIsReleased
+		return locale.ErrQueueIsReleased
 	}
 
 	if wq.isFull {
-		return errQueueIsFull
+		return locale.ErrQueueIsFull
 	}
 	wq.items[wq.tail] = w
 	wq.tail = (wq.tail + 1) % wq.size

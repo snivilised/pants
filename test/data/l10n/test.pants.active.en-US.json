@@ -1,7 +1,47 @@
 {
-  "foo-bar.astrolib.test": {
-    "description": "foo bar",
-    "hash": "sha1-d53a205a336e07cf9eac45471b3870f9489288ec",
-    "other": "foo bar"
+  "invalid-pool-expiry.error": {
+    "description": "error when negative number set as the periodic duration to purge goroutines",
+    "hash": "sha1-9c630a5539726eab9af81aaffcf60e38462a67fc",
+    "other": "invalid expiry for pool"
+  },
+  "invalid-prealloc-size.error": {
+    "description": "error created when trying to set up a negative capacity under PreAlloc mode",
+    "hash": "sha1-3090c2173e46a0a5b63b4b26b2ed8043e0f5d3f8",
+    "other": "can not set up a negative capacity under PreAlloc mode"
+  },
+  "lack-pool-func.error": {
+    "description": "error when the function for the PoolFunc is missing and needs to be defined",
+    "hash": "sha1-afec4844398d26a19326551477fd21f8e769e070",
+    "other": "must provide function for pool func"
+  },
+  "pool-closed.error": {
+    "description": "error created when submitting task to a closed pool.",
+    "hash": "sha1-def2b9e8a6f411ecf0d3f7293e23b0da1b900103",
+    "other": "this pool has been closed"
+  },
+  "pool-overload.error": {
+    "description": "will be returned when the pool is full and no workers available.",
+    "hash": "sha1-b9f74847c130c3cac4e70e8d8d1de5fa6750102e",
+    "other": "too many goroutines blocked on submit or Nonblocking is set"
+  },
+  "queue-is-full.error": {
+    "description": "error created when the worker queue is full.",
+    "hash": "sha1-bd7045aae4801880d8686bce7bb94e54af9ce21d",
+    "other": "the queue is full"
+  },
+  "queue-is-released.error": {
+    "description": "error created when trying to insert item to a released worker queue.",
+    "hash": "sha1-824f2830639b58b3ff9e86b42a48ab087fc99131",
+    "other": "the queue length is zero"
+  },
+  "timeout.error": {
+    "description": "error created if an operation timed out.",
+    "hash": "sha1-44505c53dddcaa0e5a4bb3dcf2e318697327af2d",
+    "other": "operation timed out"
+  },
+  "using-config-file": {
+    "description": "Message to indicate which config is being used",
+    "hash": "sha1-06fd9528f8226d1501ea09bc5d629f4922b4f3c6",
+    "other": "Using config file: {{.ConfigFileName}}"
   }
 }

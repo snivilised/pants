@@ -2,14 +2,18 @@ package pants_test
 
 import (
 	"context"
+	"fmt"
+	"os"
 	"runtime"
 	"sync"
 
 	. "github.com/onsi/ginkgo/v2" //nolint:revive // ginkgo ok
 	. "github.com/onsi/gomega"    //nolint:revive // gomega ok
 
+	"github.com/snivilised/li18ngo"
 	"github.com/snivilised/pants"
 	"github.com/snivilised/pants/internal/ants"
+	"github.com/snivilised/pants/internal/helpers"
 )
 
 func produce(ctx context.Context,
@@ -52,7 +56,36 @@ func consume(_ context.Context,
 	}
 }
 
-var _ = Describe("WorkerPoolFuncManifold", func() {
+var _ = Describe("WorkerPoolFuncManifold", Ordered, func() {
+	var (
+		repo                string
+		l10nPath            string
+		testTranslationFile li18ngo.TranslationFiles
+	)
+
+	BeforeAll(func() {
+		repo = helpers.Repo("")
+		l10nPath = helpers.Path(repo, "test/data/l10n")
+
+		_, err := os.Stat(l10nPath)
+		Expect(err).To(Succeed(),
+			fmt.Sprintf("l10n '%v' path does not exist", l10nPath),
+		)
+
+		testTranslationFile = li18ngo.TranslationFiles{
+			li18ngo.Li18ngoSourceID: li18ngo.TranslationSource{Name: "test"},
+		}
+	})
+
+	BeforeEach(func() {
+		if err := li18ngo.Use(func(o *li18ngo.UseOptions) {
+			o.Tag = li18ngo.DefaultLanguage
+			o.From.Sources = testTranslationFile
+		}); err != nil {
+			Fail(err.Error())
+		}
+	})
+
 	Context("ants", func() {
 		When("NonBlocking", func() {
 			Context("with consumer", func() {
