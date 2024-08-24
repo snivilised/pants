@@ -7,27 +7,27 @@ jobs:
     name: lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
-          go-version: 1.22
+          go-version: 1.23
       - uses: actions/checkout@v3
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.56.2
+          version: v1.60.3
           args: --verbose
 
   test:
     strategy:
       matrix:
-        go-version: [1.22]
+        go-version: [1.23]
         platform: [ubuntu-latest, macos-latest]
 
     runs-on: ${{ matrix.platform }}
 
     steps:
       - name: Install Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go-version }}
 
