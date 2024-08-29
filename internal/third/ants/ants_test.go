@@ -13,8 +13,8 @@ import (
 
 	"github.com/snivilised/li18ngo"
 	"github.com/snivilised/pants"
-	"github.com/snivilised/pants/internal/ants"
 	"github.com/snivilised/pants/internal/helpers"
+	"github.com/snivilised/pants/internal/third/ants"
 	"github.com/snivilised/pants/locale"
 )
 

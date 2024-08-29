@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/snivilised/pants/internal/ants"
-	"github.com/snivilised/pants/internal/lo"
+	"github.com/snivilised/pants/internal/third/ants"
+	"github.com/snivilised/pants/internal/third/lo"
 	"github.com/snivilised/pants/locale"
 )
 

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/snivilised/pants"
-	"github.com/snivilised/pants/internal/lo"
+	"github.com/snivilised/pants/internal/third/lo"
 )
 
 // Demonstrates Timeout On Send
@@ -41,10 +41,10 @@ func main() {
 	}
 
 	wg.Add(1)
-	go produce(ctx, pool, &wg)
+	go produce(ctx, pool, &wg) //nolint:wsl // pedantic
 
 	wg.Add(1)
-	go consume(ctx, pool, &wg)
+	go consume(ctx, pool, &wg) //nolint:wsl // pedantic
 
 	fmt.Printf("pool with func, no of running workers:%d\n",
 		pool.Running(),

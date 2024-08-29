@@ -1,6 +1,6 @@
 package pants
 
-import "github.com/snivilised/pants/internal/ants"
+import "github.com/snivilised/pants/internal/third/ants"
 
 type (
 	// IDGenerator is a sequential unique id generator interface
