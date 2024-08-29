@@ -10,6 +10,7 @@
     "bodyclose",
     "Clonable",
     "cmds",
+    "copyloopvar",
     "coverpkg",
     "coverprofile",
     "cubiest",

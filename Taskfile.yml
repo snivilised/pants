@@ -98,7 +98,7 @@ tasks:
 
   ta:
     cmds:
-      - ginkgo -p ./internal/ants
+      - ginkgo -p ./internal/third/ants
 
   tl:
     cmds:
@@ -169,7 +169,7 @@ tasks:
   cover:
     cmds:
       - mkdir -p ./coverage
-      - mkdir -p ./internal/ants/coverage
+      - mkdir -p ./internal/third/ants/coverage
       - mkdir -p ./locale/coverage
       - ginkgo --json-report
         ./ginkgo.report

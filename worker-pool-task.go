@@ -25,7 +25,7 @@ package pants
 import (
 	"context"
 
-	"github.com/snivilised/pants/internal/ants"
+	"github.com/snivilised/pants/internal/third/ants"
 )
 
 type TaskPool[I, O any] struct {

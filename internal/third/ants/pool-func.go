@@ -29,21 +29,22 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/snivilised/pants/internal/ants/async"
+	"github.com/snivilised/pants/internal/third/ants/async"
 	"github.com/snivilised/pants/locale"
 )
 
-// Pool accepts the tasks and process them concurrently,
+// PoolWithFunc accepts the tasks and process them concurrently,
 // it limits the total of goroutines to a given number by recycling goroutines.
-type Pool struct {
+type PoolWithFunc struct {
 	workerPool
+	// poolFunc is the function for processing tasks.
+	poolFunc PoolFunc
 }
 
 // purgeStaleWorkers clears stale workers periodically, it runs in an
 // individual goroutine, as a scavenger.
-func (p *Pool) purgeStaleWorkers(purgeCtx context.Context) {
+func (p *PoolWithFunc) purgeStaleWorkers(purgeCtx context.Context) {
 	ticker := time.NewTicker(p.o.ExpiryDuration)
-
 	defer func() {
 		ticker.Stop()
 		atomic.StoreInt32(&p.purgeDone, 1)
@@ -76,9 +77,8 @@ func (p *Pool) purgeStaleWorkers(purgeCtx context.Context) {
 			staleWorkers[i] = nil
 		}
 
-		// There might be a situation where all workers have been cleaned
-		// up (no worker is running), while some invokers still are stuck
-		// in p.cond.Wait(), then we need to awake those invokers.
+		// There might be a situation where all workers have been cleaned up (no worker is running),
+		// while some invokers still are stuck in p.cond.Wait(), then we need to awake those invokers.
 		if isDormant && p.Waiting() > 0 {
 			p.cond.Broadcast()
 		}
@@ -86,7 +86,7 @@ func (p *Pool) purgeStaleWorkers(purgeCtx context.Context) {
 }
 
 // ticktock is a goroutine that updates the current time in the pool regularly.
-func (p *Pool) ticktock(ticktockCtx context.Context) {
+func (p *PoolWithFunc) ticktock(ticktockCtx context.Context) {
 	ticker := time.NewTicker(nowTimeUpdateInterval)
 	defer func() {
 		ticker.Stop()
@@ -108,7 +108,7 @@ func (p *Pool) ticktock(ticktockCtx context.Context) {
 	}
 }
 
-func (p *Pool) goPurge(ctx context.Context) {
+func (p *PoolWithFunc) goPurge(ctx context.Context) {
 	if p.o.DisablePurge {
 		return
 	}
@@ -119,19 +119,26 @@ func (p *Pool) goPurge(ctx context.Context) {
 	go p.purgeStaleWorkers(purgeCtx)
 }
 
-func (p *Pool) goTicktock(ctx context.Context) {
+func (p *PoolWithFunc) goTicktock(ctx context.Context) {
 	p.now.Store(time.Now())
 	var ticktockCtx context.Context
 	ticktockCtx, p.stopTicktock = context.WithCancel(ctx)
 	go p.ticktock(ticktockCtx)
 }
 
-func (p *Pool) nowTime() time.Time {
+func (p *PoolWithFunc) nowTime() time.Time {
 	return p.now.Load().(time.Time)
 }
 
-// NewPool instantiates a Pool with customized options.
-func NewPool(ctx context.Context, options ...Option) (*Pool, error) {
+// NewPoolWithFunc instantiates a PoolWithFunc with customized options.
+func NewPoolWithFunc(ctx context.Context,
+	pf PoolFunc,
+	options ...Option,
+) (*PoolWithFunc, error) {
+	if pf == nil {
+		return nil, locale.ErrLackPoolFunc
+	}
+
 	opts := NewOptions(options...)
 	size := opts.Size
 
@@ -151,21 +158,20 @@ func NewPool(ctx context.Context, options ...Option) (*Pool, error) {
 		opts.Logger = defaultLogger
 	}
 
-	p := &Pool{
+	p := &PoolWithFunc{
 		workerPool: workerPool{
 			capacity: int32(size), //nolint:gosec // ok
 			lock:     async.NewSpinLock(),
 			o:        opts,
 		},
+		poolFunc: pf,
 	}
-
 	p.workerCache.New = func() interface{} { // interface{} => sync.Pool api
-		return &goWorker{
-			pool:   p,
-			taskCh: make(chan TaskFunc, workerChanCap),
+		return &goWorkerWithFunc{
+			pool:    p,
+			inputCh: make(InputStream, workerChanCap),
 		}
 	}
-
 	if p.o.PreAlloc {
 		p.workers = newWorkerQueue(queueTypeLoopQueue, int(size)) //nolint:gosec // ok
 	} else {
@@ -180,28 +186,27 @@ func NewPool(ctx context.Context, options ...Option) (*Pool, error) {
 	return p, nil
 }
 
-// Submit submits a task to this pool.
+// Invoke submits a task to pool.
 //
-// Note that you are allowed to call Pool.Submit() from the current
-// Pool.Submit(), but what calls for special attention is that you will
-// get blocked with the last Pool.Submit() call once the current Pool
-// runs out of its capacity, and to avoid this, you should instantiate
-// a Pool with ants.WithNonblocking(true).
-func (p *Pool) Submit(ctx context.Context, task TaskFunc) error {
+// Note that you are allowed to call Pool.Invoke() from the current Pool.Invoke(),
+// but what calls for special attention is that you will get blocked with the last
+// Pool.Invoke() call once the current Pool runs out of its capacity, and to avoid this,
+// you should instantiate a PoolWithFunc with ants.WithNonblocking(true).
+func (p *PoolWithFunc) Invoke(ctx context.Context, job InputParam) error {
 	if p.IsClosed() {
 		return locale.ErrPoolClosed
 	}
 
 	w, err := p.retrieveWorker()
 	if w != nil {
-		w.sendTask(ctx, task)
+		w.sendParam(ctx, job)
 	}
 
 	return err
 }
 
 // Reboot reboots a closed pool.
-func (p *Pool) Reboot(ctx context.Context) {
+func (p *PoolWithFunc) Reboot(ctx context.Context) {
 	if atomic.CompareAndSwapInt32(&p.state, CLOSED, OPENED) {
 		atomic.StoreInt32(&p.purgeDone, 0)
 		p.goPurge(ctx)
@@ -211,8 +216,8 @@ func (p *Pool) Reboot(ctx context.Context) {
 }
 
 // retrieveWorker returns an available worker to run the tasks.
-func (p *Pool) retrieveWorker() (w worker, err error) {
-	p.lock.Lock() // why isn't the unlock just deferred?
+func (p *PoolWithFunc) retrieveWorker() (w worker, err error) {
+	p.lock.Lock()
 
 retry:
 	// First try to fetch the worker from the queue.
@@ -226,25 +231,23 @@ retry:
 	// then just spawn a new worker goroutine.
 	if capacity := p.Cap(); capacity == -1 || capacity > p.Running() {
 		p.lock.Unlock()
-		w, _ = p.workerCache.Get().(*goWorker)
+		w, _ = p.workerCache.Get().(*goWorkerWithFunc)
 		w.run()
 
 		return //nolint:nakedret // wtf
 	}
 
-	// Bail out early if it's in nonblocking mode or the number of pending
-	// callers reaches the maximum limit value.
-	full := p.Waiting() >= p.o.MaxBlockingTasks
-	exceeded := p.o.MaxBlockingTasks != 0 && full
-
+	// Bail out early if it's in nonblocking mode or the number of pending callers
+	// reaches the maximum limit value.
+	exceeded := (p.o.MaxBlockingTasks != 0 && p.Waiting() >= p.o.MaxBlockingTasks)
 	if p.o.Nonblocking || exceeded {
 		p.lock.Unlock()
 
 		return nil, locale.ErrPoolOverload
 	}
 
-	// Otherwise, we'll have to keep them blocked and wait for at least one
-	// worker to be put back into pool.
+	// Otherwise, we'll have to keep them blocked and wait for at least one worker
+	// to be put back into pool.
 	p.addWaiting(1)
 	p.cond.Wait() // block and wait for an available worker
 	p.addWaiting(-1)
@@ -259,10 +262,9 @@ retry:
 }
 
 // revertWorker puts a worker back into free pool, recycling the goroutines.
-func (p *Pool) revertWorker(worker *goWorker) bool {
+func (p *PoolWithFunc) revertWorker(worker *goWorkerWithFunc) bool {
 	if capacity := p.Cap(); (capacity > 0 && p.Running() > capacity) || p.IsClosed() {
 		p.cond.Broadcast()
-
 		return false
 	}
 

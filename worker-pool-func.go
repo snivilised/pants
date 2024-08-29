@@ -3,7 +3,7 @@ package pants
 import (
 	"context"
 
-	"github.com/snivilised/pants/internal/ants"
+	"github.com/snivilised/pants/internal/third/ants"
 )
 
 type FuncPool[I, O any] struct {
