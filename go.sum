@@ -27,8 +27,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rogpeppe/go-internal v1.11.0 h1:cWPaGQEPrBb5/AsnsZesgZZ9yb1OQ+GOISoDNXVBh4M=
 github.com/rogpeppe/go-internal v1.11.0/go.mod h1:ddIwULY96R17DhadqLgMfk9H9tvdUzkipdSkR5nkCZA=
-github.com/snivilised/li18ngo v0.1.3 h1:wi5pa66vs2/gXyvZP64i9uwlCvXpedELKdFpn3B3SR8=
-github.com/snivilised/li18ngo v0.1.3/go.mod h1:Or3qUhpR6AM1X51i82RtyCvORWy2/hrxY9lg1i1gFTE=
+github.com/snivilised/li18ngo v0.1.4 h1:y6EECoVFpmkud2yDEeBnMnebPmSvdrEZ/LAq1PoPctE=
+github.com/snivilised/li18ngo v0.1.4/go.mod h1:Or3qUhpR6AM1X51i82RtyCvORWy2/hrxY9lg1i1gFTE=
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
 golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa h1:ELnwvuAXPNtPk1TJRuGkI9fDTwym6AYBu0qzT8AcHdI=
