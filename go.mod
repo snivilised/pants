@@ -4,7 +4,7 @@ go 1.23.0
 
 require (
 	github.com/nicksnyder/go-i18n/v2 v2.4.0
-	github.com/onsi/ginkgo/v2 v2.20.1
+	github.com/onsi/ginkgo/v2 v2.20.2
 	github.com/onsi/gomega v1.34.2
 	github.com/snivilised/li18ngo v0.1.4
 )
