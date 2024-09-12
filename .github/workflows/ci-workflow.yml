@@ -1,4 +1,5 @@
 name: Pants Continuous Integration
+
 on:
   push:
 
@@ -25,25 +26,50 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
 
+    env:
+      COVER_DIR: ${{ github.workspace }}/coverage
+      COVER_FILE: coverage.out
+      COVER_OUT_PATH: ${{ github.workspace }}/coverage/coverage.out
+      COVER_HTML_PATH: ${{ github.workspace }}/coverage/coverage.html
+      GINKGO_REPORT: ginkgo.report
+
     steps:
       - name: Install Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
 
       - name: Install goveralls
         run: go install github.com/mattn/goveralls@latest
 
+      - name: Install ginkgo
+        run: go install github.com/onsi/ginkgo/v2/ginkgo@v2.20.0
+
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - run: go test -v -coverprofile=coverage.out ./...
+      - name: Ensure coverage directory exists
+        run: |
+          mkdir -p ${{ github.workspace }}/coverage
+      
+      - name: Run tests and generate coverage profile with Ginkgo
+        run: |
+          ginkgo run -r -json-report {{env.GINKGO_REPORT}} -coverpkg=./... -coverprofile=coverage.out
 
-      - uses: shogo82148/actions-goveralls@v1
+      - name: Apply coverage exclusions
+        run: |
+          ${{ github.workspace }}/scripts/apply-coverage-exclusions.sh
+      
+      - name: Check coverage directory contents
+        run: |
+          echo "Contents of ${{ github.workspace }}/coverage:"
+          ls -la ${{ github.workspace }}/coverage
+
+      - name: Generate HTML coverage report
+        run: |
+          go tool cover -html=coverage.out -o ${{ github.workspace }}/coverage/coverage.html
+
+      - name: Upload coverage to Coveralls
+        uses: shogo82148/actions-goveralls@v1
         with:
           path-to-profile: coverage.out
-
-      - name: Send coverage
-        env:
-          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: goveralls -coverprofile=coverage.out -service=github
