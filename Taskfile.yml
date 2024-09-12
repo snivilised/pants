@@ -26,6 +26,11 @@ vars:
   ACTIVE_US: "{{.BINARY_NAME}}.active.en-US.{{.FORMAT}}"
   TRANSLATE_US: "{{.BINARY_NAME}}.translate.en-US.{{.FORMAT}}"
   TRANSLATE_US_FILEPATH: "{{.US_OUT_DIR}}/{{.TRANSLATE_US}}"
+  #
+  COVER_DIR: "./"
+  COVER_FILE: "coverage.out"
+  COVER_HTML_PATH: "./coverage.html"
+  GINKGO_REPORT: "ginkgo.report"
 
 tasks:
 
@@ -162,21 +167,37 @@ tasks:
 
   # === coverage =============================================
 
-  publish-cover:
+  cover-clean:
+    cmds:
+      - rm -rf ./coverage
+
+  cover-publish:
     cmds:
       - goveralls -repotoken {{.COVERALLS_TOKEN}}
 
-  cover:
+  cover-setup:
     cmds:
       - mkdir -p ./coverage
-      - mkdir -p ./internal/third/ants/coverage
-      - mkdir -p ./locale/coverage
-      - ginkgo --json-report
-        ./ginkgo.report
-        -coverpkg=./...
-        -coverprofile=./coverage/coverage.out -r
-      - go tool cover -html=./coverage/coverage.out -o ./coverage/coverage.html
-      - open ./coverage/coverage.html
+
+  cover-ginkgo:
+    cmds:
+      - ginkgo run -r -json-report {{.GINKGO_REPORT}} -coverpkg=./... -coverprofile={{.COVER_FILE}} --output-dir {{.COVER_DIR}}
+
+  cover-show:
+    cmds:
+      - open {{.COVER_HTML_PATH}}
+
+  cover-exclude:
+    cmds:
+      - ./scripts/apply-coverage-exclusions.sh
+
+  cover:
+    cmds:
+      - task: cover-setup
+      - task: cover-ginkgo
+      - task: cover-exclude
+      - go tool cover -html=./coverage.out -o {{.COVER_HTML_PATH}}
+      - open {{.COVER_HTML_PATH}}
 
   # === i18n =================================================
 
