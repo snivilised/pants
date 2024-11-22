@@ -3,6 +3,11 @@ package pants
 import "github.com/snivilised/pants/internal/third/ants"
 
 type (
+	// ConditionalOption allows the delaying of inception of the option until
+	// the condition is known to be true. This is in contrast to IfOption where the
+	// Option is pre-created, regardless of the condition.
+	ConditionalOption = ants.ConditionalOption
+
 	// IDGenerator is a sequential unique id generator interface
 	IDGenerator = ants.IDGenerator
 
@@ -26,6 +31,28 @@ type (
 )
 
 var (
+	// IfOption enables options to be conditional. IfOption condition evaluates to true
+	// then the option is returned, otherwise nil.
+	IfOption = ants.IfOption
+
+	// IfElseOption provides conditional option selection similar to IfOption but
+	// handles both true and false cases. It accepts a condition and two
+	// ConditionalOption functions:
+	// tOption (returned when condition is true) and
+	// fOption (returned when condition is false).
+	IfElseOption = ants.IfElseOption
+
+	// IfOptionF uses ConditionalOption to delay the creation of the option
+	// until after the condition is known to be true.
+	IfOptionF = ants.IfOptionF
+
+	// IfElseOptionF provides conditional option selection similar to IfOptionF but
+	// handles both true and false cases. It accepts a condition and two
+	// ConditionalOption functions:
+	// tOption (executed when condition is true) and
+	// fOption (executed when condition is false).
+	IfElseOptionF = ants.IfElseOptionF
+
 	// WithDisablePurge indicates whether we turn off automatically purge
 	WithDisablePurge = ants.WithDisablePurge
 
