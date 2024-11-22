@@ -33,6 +33,47 @@ func IfOption(condition bool, option Option) Option {
 	return nil
 }
 
+// IfElseOption provides conditional option selection similar to IfOption but
+// handles both true and false cases. It accepts a condition and two
+// ConditionalOption functions:
+// tOption (returned when condition is true) and
+// fOption (returned when condition is false).
+func IfElseOption(condition bool, tOption, fOption Option) Option {
+	if condition {
+		return tOption
+	}
+
+	return fOption
+}
+
+// ConditionalOption allows the delaying of inception of the option until
+// the condition is known to be true. This is in contrast to IfOption where the
+// Option is pre-created, regardless of the condition.
+type ConditionalOption func() Option
+
+// IfOptionF uses ConditionalOption to delay the creation of the option
+// until after the condition is known to be true.
+func IfOptionF(condition bool, option ConditionalOption) Option {
+	if condition {
+		return option()
+	}
+
+	return nil
+}
+
+// IfElseOptionF provides conditional option selection similar to IfOptionF but
+// handles both true and false cases. It accepts a condition and two
+// ConditionalOption functions:
+// tOption (executed when condition is true) and
+// fOption (executed when condition is false).
+func IfElseOptionF(condition bool, tOption, fOption ConditionalOption) Option {
+	if condition {
+		return tOption()
+	}
+
+	return fOption()
+}
+
 func withDefaults(options ...Option) []Option {
 	defaults := []Option{
 		WithGenerator(&Sequential{
