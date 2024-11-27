@@ -1,11 +1,15 @@
 package helpers
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/fortytw2/leaktest"
+	. "github.com/onsi/ginkgo/v2" //nolint:stylecheck,revive // ok
 )
 
 func Path(parent, relative string) string {
@@ -60,4 +64,13 @@ func Log() string {
 	}
 
 	panic("could not get root path")
+}
+
+func WithTestContext(specCtx SpecContext, fn func(context.Context, context.CancelFunc)) {
+	defer leaktest.Check(GinkgoT())()
+
+	ctx, cancel := context.WithCancel(specCtx)
+	defer cancel()
+
+	fn(ctx, cancel)
 }
