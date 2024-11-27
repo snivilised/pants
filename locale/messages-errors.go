@@ -223,6 +223,33 @@ var ErrQueueIsReleased = QueueIsReleasedError{
 	},
 }
 
+// ❌ BadObservationTemplData
+
+// BadObservationTemplData will be returned when trying to insert item to a
+// released worker queue
+type BadObservationErrorTemplData struct {
+	pantsTemplData
+}
+
+// Message
+func (td BadObservationErrorTemplData) Message() *i18n.Message {
+	return &i18n.Message{
+		ID:          "bad-observation.error",
+		Description: "bad observation, observe called, but output not requested using WithOutput",
+		Other:       "bad observation, observe called, but WithOutput operator not used",
+	}
+}
+
+type BadObservationError struct {
+	li18ngo.LocalisableError
+}
+
+var ErrBadObservation = BadObservationError{
+	LocalisableError: li18ngo.LocalisableError{
+		Data: BadObservationErrorTemplData{},
+	},
+}
+
 // ❌❌ FooBar
 
 // FooBarTemplData - TODO: this is a none existent error that should be

@@ -96,6 +96,7 @@ tasks:
       - go clean -testcache
 
   # === test =================================================
+  # -p = run tests in parallel
 
   t:
     cmds:
@@ -108,6 +109,10 @@ tasks:
   tl:
     cmds:
       - go test ./locale
+
+  tp:
+    cmds:
+      - ginkgo -p
 
   dry:
     cmds:
