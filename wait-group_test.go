@@ -11,7 +11,7 @@ import (
 
 	"github.com/snivilised/li18ngo"
 	"github.com/snivilised/pants"
-	"github.com/snivilised/pants/internal/helpers"
+	"github.com/snivilised/pants/internal/lab"
 )
 
 var _ = Describe("pants.WaitGroup", Ordered, func() {
@@ -22,8 +22,8 @@ var _ = Describe("pants.WaitGroup", Ordered, func() {
 	)
 
 	BeforeAll(func() {
-		repo = helpers.Repo("")
-		l10nPath = helpers.Path(repo, "test/data/l10n")
+		repo = lab.Repo("")
+		l10nPath = lab.Path(repo, "test/data/l10n")
 
 		_, err := os.Stat(l10nPath)
 		Expect(err).To(Succeed(),
