@@ -49,37 +49,9 @@ var _ = Describe("WorkerPoolFunc", Ordered, func() {
 	Context("ants", func() {
 		When("NonBlocking", func() {
 			It("should: not fail", func(specCtx SpecContext) {
-				// TestNonblockingSubmit
-				var wg sync.WaitGroup
-
-				ctx, cancel := context.WithCancel(specCtx)
-				defer cancel()
-
-				pool, err := pants.NewFuncPool[int, int](ctx, demoPoolFunc, &wg,
-					pants.WithSize(AntsSize),
-				)
-
-				defer pool.Release(ctx)
-
-				for i := 0; i < n; i++ {
-					_ = pool.Post(ctx, Param)
-				}
-				wg.Wait()
-				GinkgoWriter.Printf("pool with func, no of running workers:%d\n",
-					pool.Running(),
-				)
-				ShowMemStats()
-
-				Expect(err).To(Succeed())
-			})
-
-			Context("cancelled", func() {
-				It("should: not fail", func(specCtx SpecContext) {
+				lab.WithTestContext(specCtx, func(ctx context.Context, _ context.CancelFunc) {
 					// TestNonblockingSubmit
 					var wg sync.WaitGroup
-
-					ctx, cancel := context.WithCancel(specCtx)
-					defer cancel()
 
 					pool, err := pants.NewFuncPool[int, int](ctx, demoPoolFunc, &wg,
 						pants.WithSize(AntsSize),
@@ -89,11 +61,6 @@ var _ = Describe("WorkerPoolFunc", Ordered, func() {
 
 					for i := 0; i < n; i++ {
 						_ = pool.Post(ctx, Param)
-
-						if i > 10 {
-							cancel()
-							break
-						}
 					}
 					wg.Wait()
 					GinkgoWriter.Printf("pool with func, no of running workers:%d\n",
@@ -102,6 +69,38 @@ var _ = Describe("WorkerPoolFunc", Ordered, func() {
 					ShowMemStats()
 
 					Expect(err).To(Succeed())
+
+				})
+			})
+
+			Context("cancelled", func() {
+				It("should: not fail", func(specCtx SpecContext) {
+					lab.WithTestContext(specCtx, func(ctx context.Context, cancel context.CancelFunc) {
+						// TestNonblockingSubmit
+						var wg sync.WaitGroup
+
+						pool, err := pants.NewFuncPool[int, int](ctx, demoPoolFunc, &wg,
+							pants.WithSize(AntsSize),
+						)
+
+						defer pool.Release(ctx)
+
+						for i := 0; i < n; i++ {
+							_ = pool.Post(ctx, Param)
+
+							if i > 10 {
+								cancel()
+								break
+							}
+						}
+						wg.Wait()
+						GinkgoWriter.Printf("pool with func, no of running workers:%d\n",
+							pool.Running(),
+						)
+						ShowMemStats()
+
+						Expect(err).To(Succeed())
+					})
 				})
 			})
 		})
