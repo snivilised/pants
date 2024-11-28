@@ -14,7 +14,7 @@ import (
 
 	"github.com/snivilised/li18ngo"
 	"github.com/snivilised/pants"
-	"github.com/snivilised/pants/internal/helpers"
+	"github.com/snivilised/pants/internal/lab"
 	"github.com/snivilised/pants/internal/third/ants"
 	"github.com/snivilised/pants/locale"
 )
@@ -79,8 +79,8 @@ var _ = Describe("WorkerPoolFuncManifold", Ordered, func() {
 	)
 
 	BeforeAll(func() {
-		repo = helpers.Repo("")
-		l10nPath = helpers.Path(repo, "test/data/l10n")
+		repo = lab.Repo("")
+		l10nPath = lab.Path(repo, "test/data/l10n")
 
 		_, err := os.Stat(l10nPath)
 		Expect(err).To(Succeed(),
@@ -105,7 +105,7 @@ var _ = Describe("WorkerPoolFuncManifold", Ordered, func() {
 		When("NonBlocking", func() {
 			Context("with consumer", func() {
 				It("🧪 should: not fail", func(specCtx SpecContext) {
-					helpers.WithTestContext(specCtx, func(ctx context.Context, _ context.CancelFunc) {
+					lab.WithTestContext(specCtx, func(ctx context.Context, _ context.CancelFunc) {
 						// TestNonblockingSubmit
 						var wg sync.WaitGroup
 
@@ -136,7 +136,7 @@ var _ = Describe("WorkerPoolFuncManifold", Ordered, func() {
 
 			When("observed but missing WithOutput option", func() {
 				It("should: proceed with default output definition", func(specCtx SpecContext) {
-					helpers.WithTestContext(specCtx, func(ctx context.Context, _ context.CancelFunc) {
+					lab.WithTestContext(specCtx, func(ctx context.Context, _ context.CancelFunc) {
 						var wg sync.WaitGroup
 
 						pool, err := pants.NewManifoldFuncPool(
@@ -165,7 +165,7 @@ var _ = Describe("WorkerPoolFuncManifold", Ordered, func() {
 
 			Context("without consumer", func() {
 				It("🧪 should: not fail", func(specCtx SpecContext) {
-					helpers.WithTestContext(specCtx, func(ctx context.Context, _ context.CancelFunc) {
+					lab.WithTestContext(specCtx, func(ctx context.Context, _ context.CancelFunc) {
 						// TestNonblockingSubmit
 						var wg sync.WaitGroup
 
@@ -192,7 +192,7 @@ var _ = Describe("WorkerPoolFuncManifold", Ordered, func() {
 
 			Context("with input stream", func() {
 				It("🧪 should: not fail", func(specCtx SpecContext) {
-					helpers.WithTestContext(specCtx, func(ctx context.Context, _ context.CancelFunc) {
+					lab.WithTestContext(specCtx, func(ctx context.Context, _ context.CancelFunc) {
 						// TestNonblockingSubmit
 						var wg sync.WaitGroup
 
@@ -225,7 +225,7 @@ var _ = Describe("WorkerPoolFuncManifold", Ordered, func() {
 			Context("cancelled", func() {
 				Context("without consumer", func() {
 					It("🧪 should: not fail", func(specCtx SpecContext) {
-						helpers.WithTestContext(specCtx, func(ctx context.Context, cancel context.CancelFunc) {
+						lab.WithTestContext(specCtx, func(ctx context.Context, cancel context.CancelFunc) {
 							// TestNonblockingSubmit
 							var wg sync.WaitGroup
 
@@ -308,7 +308,7 @@ var _ = Describe("WorkerPoolFuncManifold", Ordered, func() {
 		Context("IfOption", func() {
 			When("true", func() {
 				It("🧪 should: use option", func(specCtx SpecContext) {
-					helpers.WithTestContext(specCtx, func(ctx context.Context, _ context.CancelFunc) {
+					lab.WithTestContext(specCtx, func(ctx context.Context, _ context.CancelFunc) {
 						var wg sync.WaitGroup
 
 						const (
@@ -330,7 +330,7 @@ var _ = Describe("WorkerPoolFuncManifold", Ordered, func() {
 
 			When("false", func() {
 				It("🧪 should: use option", func(specCtx SpecContext) {
-					helpers.WithTestContext(specCtx, func(ctx context.Context, _ context.CancelFunc) {
+					lab.WithTestContext(specCtx, func(ctx context.Context, _ context.CancelFunc) {
 						var wg sync.WaitGroup
 
 						const (

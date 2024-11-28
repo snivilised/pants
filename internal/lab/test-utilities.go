@@ -1,4 +1,4 @@
-package helpers
+package lab
 
 import (
 	"context"
