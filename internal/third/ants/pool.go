@@ -37,6 +37,7 @@ import (
 // it limits the total of goroutines to a given number by recycling goroutines.
 type Pool struct {
 	workerPool
+	nextID atomic.Int32
 }
 
 // purgeStaleWorkers clears stale workers periodically, it runs in an
@@ -162,7 +163,8 @@ func NewPool(ctx context.Context, options ...Option) (*Pool, error) {
 	p.workerCache.New = func() interface{} { // interface{} => sync.Pool api
 		return &goWorker{
 			pool:   p,
-			taskCh: make(chan TaskFunc, workerChanCap),
+			taskCh: make(chan *TaskEnvelope, workerChanCap),
+			id:     p.allocID(),
 		}
 	}
 
@@ -219,7 +221,7 @@ retry:
 	if w = p.workers.detach(); w != nil {
 		p.lock.Unlock()
 
-		return //nolint:nakedret // wtf
+		return //nolint:nakedret // foo
 	}
 
 	// If the worker queue is empty, and we don't run out of the pool capacity,
@@ -229,7 +231,7 @@ retry:
 		w, _ = p.workerCache.Get().(*goWorker)
 		w.run()
 
-		return //nolint:nakedret // wtf
+		return //nolint:nakedret // foo
 	}
 
 	// Bail out early if it's in nonblocking mode or the number of pending
@@ -288,4 +290,8 @@ func (p *Pool) revertWorker(worker *goWorker) bool {
 	p.lock.Unlock()
 
 	return true
+}
+
+func (p *Pool) allocID() RoutineID {
+	return RoutineID(p.nextID.Add(1))
 }

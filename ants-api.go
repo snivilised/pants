@@ -11,6 +11,9 @@ type (
 	// IDGenerator is a sequential unique id generator interface
 	IDGenerator = ants.IDGenerator
 
+	// InputEnvelope
+	InputEnvelope = ants.InputEnvelope
+
 	// InputParam
 	InputParam = ants.InputParam
 
@@ -22,6 +25,9 @@ type (
 
 	// PoolFunc ants pool function
 	PoolFunc = ants.PoolFunc
+
+	// RoutineID the identifier representing the underlying worker.
+	RoutineID = ants.RoutineID
 
 	// Sequential represents te ants sequential ID generator
 	Sequential = ants.Sequential

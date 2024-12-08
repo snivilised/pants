@@ -208,7 +208,7 @@ var _ = Describe("Ants", Ordered, func() {
 					defer cancel()
 
 					var wg sync.WaitGroup
-					pool, _ := ants.NewPoolWithFunc(ctx, func(i pants.InputParam) {
+					pool, _ := ants.NewPoolWithFunc(ctx, func(i pants.InputEnvelope) {
 						demoPoolFunc(i)
 						wg.Done()
 					},
@@ -236,7 +236,7 @@ var _ = Describe("Ants", Ordered, func() {
 					defer cancel()
 
 					var wg sync.WaitGroup
-					pool, _ := ants.NewPoolWithFunc(ctx, func(i pants.InputParam) {
+					pool, _ := ants.NewPoolWithFunc(ctx, func(i pants.InputEnvelope) {
 						demoPoolFunc(i)
 						wg.Done()
 					},

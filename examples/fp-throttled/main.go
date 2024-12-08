@@ -44,9 +44,10 @@ func main() {
 
 	const NoW = 3
 
-	pool, _ := pants.NewFuncPool[int, int](ctx, func(input pants.InputParam) {
-		n, _ := input.(int)
-		fmt.Printf("<--- (n: %v)🍒 \n", n)
+	pool, _ := pants.NewFuncPool[int, int](ctx, func(input pants.InputEnvelope) {
+		n, _ := input.Param().(int)
+		id := input.WorkerID()
+		fmt.Printf("<--- (n: %v, from: %v)🍒 \n", n, id)
 		time.Sleep(time.Second)
 	}, &wg,
 		pants.WithSize(NoW),
@@ -56,7 +57,9 @@ func main() {
 	defer pool.Release(ctx)
 
 	for i := 0; i < 30; i++ { // producer
-		fmt.Printf("PRE: <--- (n: %v) [%v] 🍋 \n", i, time.Now().Format(time.TimeOnly))
+		fmt.Printf("PRE: <--- (n: %v) [%v] 🍋 \n=> running: '%v'\n",
+			i, time.Now().Format(time.TimeOnly), pool.Running(),
+		)
 		_ = pool.Post(ctx, i)
 		fmt.Printf("POST: <--- (n: %v) [%v] 🍊 \n", i, time.Now().Format(time.TimeOnly))
 	}

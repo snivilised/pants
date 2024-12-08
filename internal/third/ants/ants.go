@@ -36,6 +36,8 @@ const (
 
 	// DefaultCleanIntervalTime is the interval time to clean up goroutines.
 	DefaultCleanIntervalTime = time.Second
+
+	releaseTimeoutInterval = 10
 )
 
 const (
@@ -65,7 +67,9 @@ var (
 
 	// log.Lmsgprefix is not available in go1.13, just make an identical value for it.
 	logLmsgprefix = 64
-	defaultLogger = Logger(log.New(os.Stderr, "[ants]: ", log.LstdFlags|logLmsgprefix|log.Lmicroseconds))
+	defaultLogger = Logger(log.New(os.Stderr, "[ants]: ",
+		log.LstdFlags|logLmsgprefix|log.Lmicroseconds),
+	)
 )
 
 const nowTimeUpdateInterval = 500 * time.Millisecond
@@ -77,14 +81,70 @@ type Logger interface {
 }
 
 type (
-	TaskFunc    func()
-	TaskStream  chan TaskFunc
-	InputParam  interface{}
-	PoolFunc    func(InputParam)
-	InputStream chan InputParam
-	Nothing     struct{}
+	// RoutineID the identifier representing the underlying worker.
+	RoutineID int32
+
+	// WorkEnvelope the task wrapper that provides access to the
+	// worker id allocated to each job.
+	WorkEnvelope interface {
+		WorkerID() RoutineID
+	}
+
+	// TaskFunc represents the job function executed by task based
+	// worker pools.
+	TaskFunc func()
+
+	// TaskStream the channel of tasks processed by task based worker
+	// pools.
+	TaskStream chan *TaskEnvelope
+
+	// InputParam the input passed to the function for func based
+	// worker pools.
+	InputParam interface{}
+
+	// InputEnvelope the input wrapper with an input
+	InputEnvelope interface {
+		WorkEnvelope
+		Param() InputParam
+	}
+
+	// PoolFunc represents the job function executed by func based
+	// worker pools.
+	PoolFunc func(InputEnvelope)
+
+	// InputStream
+	InputStream chan InputEnvelope
+
+	// Nothing
+	Nothing struct{}
+
+	// Envelope is the underlying wrapper used for func based (with input)
+	// worker pools.
+	Envelope struct {
+		ID    RoutineID
+		Input interface{}
+	}
+
+	// TaskEnvelope is the underlying wrapper used for task based
+	// worker pools.
+	TaskEnvelope struct {
+		ID   RoutineID
+		Task TaskFunc
+	}
 )
 
-const (
-	releaseTimeoutInterval = 10
-)
+func (e Envelope) WorkerID() RoutineID {
+	return e.ID
+}
+
+func (e Envelope) Param() InputParam {
+	return e.Input
+}
+
+func (e TaskEnvelope) WorkerID() RoutineID {
+	return e.ID
+}
+
+func (e TaskEnvelope) Func() TaskFunc {
+	return e.Task
+}

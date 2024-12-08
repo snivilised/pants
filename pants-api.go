@@ -34,6 +34,7 @@ type (
 		SequenceNo int
 		Payload    O
 		Error      error
+		WorkerID   RoutineID
 	}
 
 	// JobStream bi-directional channel of Jobs of I

@@ -45,7 +45,7 @@ func newWorkerLoopQueue(size int) *loopQueue {
 	}
 }
 
-func (wq *loopQueue) len() int {
+func (wq *loopQueue) length() int {
 	if wq.size == 0 || wq.isEmpty() {
 		return 0
 	}
