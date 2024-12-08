@@ -40,6 +40,9 @@ type goWorker struct {
 
 	// lastUsed will be updated when putting a worker back into queue.
 	lastUsed time.Time
+
+	// worker id
+	id RoutineID
 }
 
 // run starts a goroutine to repeat the process
@@ -62,11 +65,11 @@ func (w *goWorker) run() {
 			w.pool.cond.Signal()
 		}()
 
-		for f := range w.taskCh {
-			if f == nil { // ✨
+		for envelope := range w.taskCh {
+			if envelope == nil { // ✨
 				return
 			}
-			f()
+			envelope.Func()()
 			if ok := w.pool.revertWorker(w); !ok {
 				return
 			}
@@ -88,7 +91,10 @@ func (w *goWorker) lastUsedTime() time.Time {
 func (w *goWorker) sendTask(ctx context.Context, fn TaskFunc) {
 	select {
 	case <-ctx.Done():
-	case w.taskCh <- fn:
+	case w.taskCh <- &TaskEnvelope{
+		ID:   w.id,
+		Task: fn,
+	}:
 	}
 }
 

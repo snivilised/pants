@@ -23,6 +23,7 @@
     "errcheck",
     "exportloopref",
     "extendio",
+    "fasthttp",
     "fieldalignment",
     "fortytw",
     "goconst",

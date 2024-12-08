@@ -36,7 +36,7 @@ type worker interface {
 }
 
 type workerQueue interface {
-	len() int // rename to length
+	length() int
 	isEmpty() bool
 	insert(worker) error
 	detach() worker

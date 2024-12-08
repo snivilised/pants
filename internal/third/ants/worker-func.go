@@ -40,6 +40,9 @@ type goWorkerWithFunc struct {
 
 	// lastUsed will be updated when putting a worker back into queue.
 	lastUsed time.Time
+
+	// worker id
+	id RoutineID
 }
 
 // run starts a goroutine to repeat the process
@@ -65,11 +68,11 @@ func (w *goWorkerWithFunc) run() {
 			w.pool.cond.Signal()
 		}()
 
-		for jobs := range w.inputCh {
-			if jobs == nil { // ✨
+		for input := range w.inputCh {
+			if input == nil { // ✨
 				return
 			}
-			w.pool.poolFunc(jobs)
+			w.pool.poolFunc(input)
 			if ok := w.pool.revertWorker(w); !ok {
 				return
 			}
@@ -95,6 +98,9 @@ func (w *goWorkerWithFunc) sendTask(context.Context, TaskFunc) {
 func (w *goWorkerWithFunc) sendParam(ctx context.Context, job InputParam) {
 	select {
 	case <-ctx.Done():
-	case w.inputCh <- job:
+	case w.inputCh <- &Envelope{
+		ID:    w.id,
+		Input: job,
+	}:
 	}
 }

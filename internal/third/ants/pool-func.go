@@ -39,6 +39,7 @@ type PoolWithFunc struct {
 	workerPool
 	// poolFunc is the function for processing tasks.
 	poolFunc PoolFunc
+	nextID   atomic.Int32
 }
 
 // purgeStaleWorkers clears stale workers periodically, it runs in an
@@ -170,6 +171,7 @@ func NewPoolWithFunc(ctx context.Context,
 		return &goWorkerWithFunc{
 			pool:    p,
 			inputCh: make(InputStream, workerChanCap),
+			id:      p.allocID(),
 		}
 	}
 	if p.o.PreAlloc {
@@ -290,4 +292,8 @@ func (p *PoolWithFunc) revertWorker(worker *goWorkerWithFunc) bool {
 	p.lock.Unlock()
 
 	return true
+}
+
+func (p *PoolWithFunc) allocID() RoutineID {
+	return RoutineID(p.nextID.Add(1))
 }

@@ -46,8 +46,8 @@ func demoFunc() {
 	time.Sleep(time.Duration(BenchParam) * time.Millisecond)
 }
 
-func demoPoolFunc(inputCh pants.InputParam) {
-	n, _ := inputCh.(int)
+func demoPoolFunc(inputCh pants.InputEnvelope) {
+	n, _ := inputCh.Param().(int)
 	time.Sleep(time.Duration(n) * time.Millisecond)
 }
 
@@ -67,8 +67,8 @@ func longRunningFunc() {
 
 var stopLongRunningPoolFunc int32
 
-func longRunningPoolFunc(arg pants.InputParam) {
-	if ch, ok := arg.(chan struct{}); ok {
+func longRunningPoolFunc(arg pants.InputEnvelope) {
+	if ch, ok := arg.Param().(chan struct{}); ok {
 		<-ch
 		return
 	}

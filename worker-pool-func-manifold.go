@@ -40,7 +40,7 @@ func NewManifoldFuncPool[I, O any](ctx context.Context,
 		wi = fromOutputInfo(o, oi)
 	}
 
-	pool, err := ants.NewPoolWithFunc(ctx, func(input InputParam) {
+	pool, err := ants.NewPoolWithFunc(ctx, func(input InputEnvelope) {
 		manifoldFuncResponse(ctx, mf, input, wi)
 	}, ants.WithOptions(*o))
 
@@ -130,10 +130,10 @@ func (p *ManifoldFuncPool[I, O]) Conclude(ctx context.Context) {
 
 func manifoldFuncResponse[I, O any](ctx context.Context,
 	mf ManifoldFunc[I, O],
-	input InputParam,
+	input InputEnvelope,
 	wi *outputInfoW[O],
 ) {
-	if job, ok := input.(Job[I]); ok {
+	if job, ok := input.Param().(Job[I]); ok {
 		payload, e := mf(job.Input)
 
 		if wi != nil {
@@ -142,6 +142,7 @@ func manifoldFuncResponse[I, O any](ctx context.Context,
 				SequenceNo: job.SequenceNo,
 				Payload:    payload,
 				Error:      e,
+				WorkerID:   input.WorkerID(),
 			})
 		}
 	}

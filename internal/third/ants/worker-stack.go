@@ -38,7 +38,7 @@ func newWorkerStack(size int) *workerStack {
 	}
 }
 
-func (wq *workerStack) len() int {
+func (wq *workerStack) length() int {
 	return len(wq.items)
 }
 
@@ -52,7 +52,7 @@ func (wq *workerStack) insert(w worker) error {
 }
 
 func (wq *workerStack) detach() worker {
-	l := wq.len()
+	l := wq.length()
 	if l == 0 {
 		return nil
 	}
@@ -65,7 +65,7 @@ func (wq *workerStack) detach() worker {
 }
 
 func (wq *workerStack) refresh(duration time.Duration) []worker {
-	n := wq.len()
+	n := wq.length()
 	if n == 0 {
 		return nil
 	}
@@ -98,7 +98,7 @@ func (wq *workerStack) search(l, r int, expiryTime time.Time) int {
 }
 
 func (wq *workerStack) reset(ctx context.Context) {
-	for i := 0; i < wq.len(); i++ {
+	for i := 0; i < wq.length(); i++ {
 		wq.items[i].finish(ctx)
 		wq.items[i] = nil
 	}

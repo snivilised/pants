@@ -96,8 +96,8 @@ func consume(_ context.Context,
 	// eg support for context cancellation.
 	//
 	for output := range pool.Observe() {
-		fmt.Printf("🍒 payload: '%v', id: '%v', seq: '%v' (e: '%v')\n",
-			output.Payload, output.ID, output.SequenceNo, output.Error,
+		fmt.Printf("🍒 payload: '%v', output-id: '%v', seq: '%v' worker-id: '%v', (e: '%v')\n",
+			output.Payload, output.ID, output.SequenceNo, output.WorkerID, output.Error,
 		)
 	}
 }
