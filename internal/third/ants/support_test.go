@@ -5,7 +5,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	. "github.com/onsi/ginkgo/v2" //nolint:revive // ok
+	. "github.com/onsi/ginkgo/v2"
 	"github.com/snivilised/pants"
 )
 

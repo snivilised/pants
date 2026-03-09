@@ -5,23 +5,12 @@ import (
 )
 
 const (
-	// TODO: This is just temporary, channel size definition still needs to be
+	// DefaultChSize TODO: This is just temporary, channel size definition still needs to be
 	// fine tuned
-	//
 	DefaultChSize = 100
 )
 
 type (
-	workerID             string
-	workerFinishedResult struct {
-		id  workerID
-		err error
-	}
-
-	finishedStream  = chan *workerFinishedResult
-	finishedStreamR = <-chan *workerFinishedResult
-	finishedStreamW = chan<- *workerFinishedResult
-
 	injectable[I any] interface {
 		inject(input I) error
 	}

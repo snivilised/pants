@@ -9,7 +9,6 @@ import (
 type FuncPool[I, O any] struct {
 	basePool[I, O]
 	functionalPool
-	sourceJobsChIn JobStream[I]
 }
 
 // NewFuncPool creates a new worker pool using the native ants interface; ie

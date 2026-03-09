@@ -20,7 +20,7 @@ const (
 
 func init() {
 	DefaultOutputOptions = &OutputOptions{
-		BufferSize:         uint(runtime.NumCPU()),
+		BufferSize:         uint(runtime.NumCPU()), //nolint:gosec // G115 ok
 		CheckCloseInterval: time.Second * scale,
 		TimeoutOnSend:      time.Second * scale,
 	}

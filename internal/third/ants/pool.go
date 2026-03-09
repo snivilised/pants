@@ -128,7 +128,7 @@ func (p *Pool) goTicktock(ctx context.Context) {
 }
 
 func (p *Pool) nowTime() time.Time {
-	return p.now.Load().(time.Time)
+	return p.now.Load().(time.Time) //nolint:errcheck // ok
 }
 
 // NewPool instantiates a Pool with customized options.
@@ -137,7 +137,7 @@ func NewPool(ctx context.Context, options ...Option) (*Pool, error) {
 	size := opts.Size
 
 	if size == 0 {
-		size = uint(runtime.NumCPU())
+		size = uint(runtime.NumCPU()) //nolint:gosec // G115 ok
 	}
 
 	if !opts.DisablePurge {

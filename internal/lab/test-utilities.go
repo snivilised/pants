@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/fortytw2/leaktest"
-	. "github.com/onsi/ginkgo/v2" //nolint:stylecheck,revive // ok
+	. "github.com/onsi/ginkgo/v2" //nolint:staticcheck // ok
 )
 
 func Path(parent, relative string) string {

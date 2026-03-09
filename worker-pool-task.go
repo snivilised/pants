@@ -31,7 +31,6 @@ import (
 type TaskPool[I, O any] struct {
 	basePool[I, O]
 	taskPool
-	sourceJobsChIn JobStream[I]
 }
 
 // NewTaskPool creates a new worker pool using the native ants interface; ie

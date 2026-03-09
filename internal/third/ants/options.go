@@ -79,7 +79,7 @@ func withDefaults(options ...Option) []Option {
 		WithGenerator(&Sequential{
 			Format: "ID:%08d",
 		}),
-		WithSize(uint(runtime.NumCPU())),
+		WithSize(uint(runtime.NumCPU())), //nolint:gosec // G115 ok
 	}
 
 	o := make([]Option, 0, len(options)+len(defaults))
