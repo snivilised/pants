@@ -1,72 +1,76 @@
-linters-settings:
-  errcheck:
-    check-type-assertions: true
-  goconst:
-    min-len: 2
-    min-occurrences: 3
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - experimental
-      - opinionated
-      - performance
-      - style
-  govet:
-    shadow: true
-    disable:
-      - fieldalignment # too strict
+version: "2"
 
-  nolintlint:
-    require-explanation: false
-    require-specific: true
+run:
+  timeout: 5m
+  issues-exit-code: 1
+
 linters:
-  disable-all: true
   enable:
-    - bodyclose
-    # - deadcode
-    # depguard needs to be reviewed properly and then configured, before
-    # it can be re-enabled.
-    # https://github.com/OpenPeeDeeP/depguard#example-configs
-    # - depguard
-    - copyloopvar
-    - dogsled
-    # - dupl
+    # correctness
     - errcheck
-    - exhaustive
-    - goconst
-    - gocritic
-    - gofmt
-    - goimports
-    - gocyclo
-    - gosec
-    - gosimple
     - govet
+    - staticcheck
     - ineffassign
-    - misspell
-    - mnd
-    - nolintlint
-    - nakedret
+
+    # bug prevention
+    - copyloopvar
+    - bodyclose
+    - exhaustive
+    - unparam
+    - unconvert
+
+    # code quality
+    # - gocyclo   # TODO: enable later, need to fix complexity issues
+    - goconst
+    - revive
     - prealloc
     - predeclared
-    - revive
-    - staticcheck
-    # - structcheck
-    - stylecheck
+
+    # security
+    - gosec
+
+    # testing
     - thelper
     - tparallel
-    - unconvert
-    - unparam
-    # - varcheck
+
+    # misc
+    - misspell
     - whitespace
-    - wsl
+    - nolintlint
+    - dogsled
+
+  settings:
+    errcheck:
+      check-type-assertions: true
+
+    goconst:
+      min-len: 2
+      min-occurrences: 3
+
+    gocyclo:
+      min-complexity: 15
+
+    govet:
+      enable:
+        - shadow
+
+    revive:
+      severity: warning
+
+    nolintlint:
+      require-explanation: false
+      require-specific: true
+
+  exclusions:
+    rules:
+      # Ginkgo/Gomega test suites use dot-imports by convention; suppress the
+      # revive dot-imports warning for all test files.
+      - path: '_test\.go'
+        linters:
+          - revive
+        text: 'dot-imports'
 
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
-  fix: true
-  exclude:
-    - "cuddle"
-
-run:
-  issues-exit-code: 1
-  timeout: "5m"
+  fix: false

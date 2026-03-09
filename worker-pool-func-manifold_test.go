@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	. "github.com/onsi/ginkgo/v2" //nolint:revive // ginkgo ok
-	. "github.com/onsi/gomega"    //nolint:revive // gomega ok
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 
 	"github.com/snivilised/li18ngo"
 	"github.com/snivilised/pants"

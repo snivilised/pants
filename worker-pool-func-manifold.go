@@ -77,7 +77,7 @@ func (p *ManifoldFuncPool[I, O]) Source(ctx context.Context,
 ) SourceStreamW[I] {
 	o := p.pool.GetOptions()
 
-	p.basePool.inputDupCh = source(ctx, wg, o,
+	p.inputDupCh = source(ctx, wg, o,
 		injector[I](func(input I) error {
 			return p.Post(ctx, input)
 		}),
@@ -86,7 +86,7 @@ func (p *ManifoldFuncPool[I, O]) Source(ctx context.Context,
 		}),
 	)
 
-	return p.basePool.inputDupCh.WriterCh
+	return p.inputDupCh.WriterCh
 }
 
 // Conclude signifies to the worker pool that no more work will be
