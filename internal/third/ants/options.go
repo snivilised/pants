@@ -133,6 +133,14 @@ type Options struct {
 
 	// Output options
 	Output *OutputOptions
+
+	// StateInitializer is called once when a worker starts to initialize
+	// its persistent state.
+	StateInitializer func(RoutineID) interface{}
+
+	// StateFinalizer is called once when a worker is retired to clean up
+	// its persistent state.
+	StateFinalizer func(interface{})
 }
 
 type InputOptions struct {
@@ -146,7 +154,7 @@ const (
 	// closed when the source of the workload indicates no more jobs will be
 	// submitted, either by closing the input stream or invoking Conclude on the pool.
 	//
-	MinimumCheckCloseInterval = time.Millisecond * 10
+	MinimumCheckCloseInterval = time.Microsecond * 100
 
 	// MinimumTimeoutOnSend denotes the minimum duration of how long to allow for
 	// when sending output. When this timeout occurs, the worker will send a
@@ -262,5 +270,19 @@ func WithOutput(size uint, interval, timeout time.Duration) Option {
 			CheckCloseInterval: max(interval, MinimumCheckCloseInterval),
 			TimeoutOnSend:      max(timeout, MinimumTimeoutOnSend),
 		}
+	}
+}
+
+// WithStateInitializer sets up the state initializer for the pool.
+func WithStateInitializer(initializer func(RoutineID) interface{}) Option {
+	return func(opts *Options) {
+		opts.StateInitializer = initializer
+	}
+}
+
+// WithStateFinalizer sets up the state finalizer for the pool.
+func WithStateFinalizer(finalizer func(interface{})) Option {
+	return func(opts *Options) {
+		opts.StateFinalizer = finalizer
 	}
 }

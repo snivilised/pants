@@ -66,6 +66,15 @@ func (p *workerPool) Waiting() int {
 	return int(atomic.LoadInt32(&p.waiting))
 }
 
+// Idle returns the number of idle workers.
+func (p *workerPool) Idle() int {
+	p.lock.Lock()
+	n := p.workers.length()
+	p.lock.Unlock()
+
+	return n
+}
+
 // Cap returns the capacity of this pool.
 func (p *workerPool) Cap() int {
 	return int(atomic.LoadInt32(&p.capacity))

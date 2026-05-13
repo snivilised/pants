@@ -2,7 +2,6 @@ package pants
 
 import (
 	"context"
-	"time"
 
 	"github.com/snivilised/pants/internal/third/ants"
 )
@@ -98,34 +97,7 @@ func (p *ManifoldFuncPool[I, O]) Source(ctx context.Context,
 // Failure to close the channel will again result in a never ending
 // worker pool.
 func (p *ManifoldFuncPool[I, O]) Conclude(ctx context.Context) {
-	if p.oi != nil && !p.ending {
-		p.ending = true
-		o := p.pool.GetOptions()
-		interval := max(o.Output.CheckCloseInterval, ants.MinimumCheckCloseInterval)
-
-		p.wg.Add(1)
-
-		go func(ctx context.Context,
-			pool *ManifoldFuncPool[I, O],
-			wg WaitGroup,
-			interval time.Duration,
-		) {
-			defer wg.Done()
-
-			for {
-				select {
-				case <-ctx.Done():
-					return
-
-				case <-time.After(interval):
-					if pool.Running() == 0 && pool.Waiting() == 0 {
-						close(p.oi.outputDupCh.Channel)
-						return
-					}
-				}
-			}
-		}(ctx, p, p.wg, interval)
-	}
+	conclude[I, O](ctx, &p.basePool, &p.functionalPool)
 }
 
 func manifoldFuncResponse[I, O any](ctx context.Context,
