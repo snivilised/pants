@@ -36,7 +36,7 @@ const (
 	PoolCap            = 5e4
 	BenchParam         = 10
 	DefaultExpiredTime = 10 * time.Second
-	CheckCloseInterval = time.Second / 100
+	CheckCloseInterval = time.Millisecond
 	TimeoutOnSend      = time.Second
 )
 

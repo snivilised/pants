@@ -34,6 +34,11 @@ func (p *functionalPool) Waiting() int {
 	return p.pool.Waiting()
 }
 
+// Idle returns the number of idle workers.
+func (p *functionalPool) Idle() int {
+	return p.pool.Idle()
+}
+
 func (p *functionalPool) GetOptions() *Options {
 	return p.pool.GetOptions()
 }
@@ -149,4 +154,39 @@ func respond[O any](ctx context.Context,
 	}
 
 	return err
+}
+
+func conclude[I, O any](ctx context.Context,
+	base *basePool[I, O],
+	functional *functionalPool,
+) {
+	if base.oi != nil && !base.ending {
+		base.ending = true
+		o := functional.pool.GetOptions()
+		interval := max(o.Output.CheckCloseInterval, ants.MinimumCheckCloseInterval)
+
+		base.wg.Add(1)
+
+		go func(ctx context.Context,
+			oi *outputInfo[O],
+			wg WaitGroup,
+			fp *functionalPool,
+			interval time.Duration,
+		) {
+			defer wg.Done()
+
+			for {
+				select {
+				case <-ctx.Done():
+					return
+
+				case <-time.After(interval):
+					if fp.Waiting() == 0 && fp.Running() == fp.Idle() {
+						close(oi.outputDupCh.Channel)
+						return
+					}
+				}
+			}
+		}(ctx, base.oi, base.wg, functional, interval)
+	}
 }

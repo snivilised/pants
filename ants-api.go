@@ -99,4 +99,10 @@ var (
 	// WithSize denotes the number of workers in the pool. Defaults
 	// to number of CPUs available.
 	WithSize = ants.WithSize
+
+	// WithStateInitializer sets up the state initializer for the pool.
+	WithStateInitializer = ants.WithStateInitializer
+
+	// WithStateFinalizer sets up the state finalizer for the pool.
+	WithStateFinalizer = ants.WithStateFinalizer
 )

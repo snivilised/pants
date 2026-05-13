@@ -106,6 +106,7 @@ type (
 	InputEnvelope interface {
 		WorkEnvelope
 		Param() InputParam
+		State() interface{}
 	}
 
 	// PoolFunc represents the job function executed by func based
@@ -123,6 +124,7 @@ type (
 	Envelope struct {
 		ID    RoutineID
 		Input interface{}
+		state interface{}
 	}
 
 	// TaskEnvelope is the underlying wrapper used for task based
@@ -139,6 +141,10 @@ func (e Envelope) WorkerID() RoutineID {
 
 func (e Envelope) Param() InputParam {
 	return e.Input
+}
+
+func (e Envelope) State() interface{} {
+	return e.state
 }
 
 func (e TaskEnvelope) WorkerID() RoutineID {
