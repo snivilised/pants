@@ -27,7 +27,7 @@ type InteractiveShellSession struct {
 
 // NewInteractiveShellSession creates a new persistent shell session.
 func NewInteractiveShellSession(shellPath string) (*InteractiveShellSession, error) {
-	cmd := exec.Command(shellPath, "-i")
+	cmd := exec.Command(shellPath, "+m", "-i")
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
 		return nil, err
