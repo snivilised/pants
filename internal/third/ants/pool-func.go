@@ -167,7 +167,7 @@ func NewPoolWithFunc(ctx context.Context,
 		},
 		poolFunc: pf,
 	}
-	p.workerCache.New = func() interface{} { // interface{} => sync.Pool api
+	p.workerCache.New = func() any { // any => sync.Pool api
 		return &goWorkerWithFunc{
 			pool:    p,
 			inputCh: make(InputStream, workerChanCap),

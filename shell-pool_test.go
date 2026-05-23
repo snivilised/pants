@@ -55,11 +55,11 @@ var _ = Describe("ShellPool", func() {
 			return session.Execute(ctx, command)
 		}
 
-		initializer := func(id pants.RoutineID) interface{} {
+		initializer := func(id pants.RoutineID) any {
 			return &mockShellSession{}
 		}
 
-		finalizer := func(state interface{}) {
+		finaliser := func(state any) {
 			if s, ok := state.(pants.ShellSession); ok {
 				_ = s.Close()
 			}
@@ -67,8 +67,8 @@ var _ = Describe("ShellPool", func() {
 
 		pool, err := pants.NewManifoldStatePool(ctx, mf, &wg,
 			pants.WithSize(uint(poolSize)),
-			pants.WithStateInitializer(initializer),
-			pants.WithStateFinalizer(finalizer),
+			pants.WithStateInitialiser(initializer),
+			pants.WithStateFinaliser(finaliser),
 			pants.WithOutput(uint(jobCount), time.Microsecond*100, time.Second),
 		)
 		Expect(err).NotTo(HaveOccurred())

@@ -45,7 +45,7 @@ type goWorkerWithFunc struct {
 	id RoutineID
 
 	// workerState is the persistent state of the worker.
-	workerState interface{}
+	workerState any
 }
 
 // run starts a goroutine to repeat the process
@@ -75,8 +75,8 @@ func (w *goWorkerWithFunc) run() {
 			w.workerState = w.pool.o.StateInitializer(w.id)
 		}
 
-		if w.pool.o.StateFinalizer != nil {
-			defer w.pool.o.StateFinalizer(w.workerState)
+		if w.pool.o.StateFinaliser != nil {
+			defer w.pool.o.StateFinaliser(w.workerState)
 		}
 
 		for input := range w.inputCh {

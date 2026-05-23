@@ -160,7 +160,7 @@ func NewPool(ctx context.Context, options ...Option) (*Pool, error) {
 		},
 	}
 
-	p.workerCache.New = func() interface{} { // interface{} => sync.Pool api
+	p.workerCache.New = func() any { // any => sync.Pool api
 		return &goWorker{
 			pool:   p,
 			taskCh: make(chan *TaskEnvelope, workerChanCap),
