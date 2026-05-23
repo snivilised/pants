@@ -112,7 +112,7 @@ type Options struct {
 
 	// PanicHandler is used to handle panics from each worker goroutine.
 	// if nil, panics will be thrown out again from worker goroutines.
-	PanicHandler func(interface{})
+	PanicHandler func(any)
 
 	// Logger is the customized logger for logging info, if it is not set,
 	// default standard logger from log package is used.
@@ -136,11 +136,11 @@ type Options struct {
 
 	// StateInitializer is called once when a worker starts to initialize
 	// its persistent state.
-	StateInitializer func(RoutineID) interface{}
+	StateInitializer func(RoutineID) any
 
-	// StateFinalizer is called once when a worker is retired to clean up
+	// StateFinaliser is called once when a worker is retired to clean up
 	// its persistent state.
-	StateFinalizer func(interface{})
+	StateFinaliser func(any)
 }
 
 type InputOptions struct {
@@ -221,7 +221,7 @@ func WithNonblocking(nonblocking bool) Option {
 }
 
 // WithPanicHandler sets up panic handler.
-func WithPanicHandler(panicHandler func(interface{})) Option {
+func WithPanicHandler(panicHandler func(any)) Option {
 	return func(opts *Options) {
 		opts.PanicHandler = panicHandler
 	}
@@ -243,12 +243,15 @@ func WithDisablePurge(disable bool) Option {
 
 // pants options ...
 
+// WithSize defines the size of the ants pool.
 func WithSize(size uint) Option {
 	return func(opts *Options) {
 		opts.Size = size
 	}
 }
 
+// WithGenerator defines custom ID generator, for such things
+// such as worker ID or job ID.
 func WithGenerator(generator IDGenerator) Option {
 	return func(opts *Options) {
 		if generator != nil {
@@ -257,12 +260,14 @@ func WithGenerator(generator IDGenerator) Option {
 	}
 }
 
+// WithInput defines the size of the input buffer channel
 func WithInput(size uint) Option {
 	return func(opts *Options) {
 		opts.Input.BufferSize = size
 	}
 }
 
+// WithOutput defines the size of the output channel
 func WithOutput(size uint, interval, timeout time.Duration) Option {
 	return func(opts *Options) {
 		opts.Output = &OutputOptions{
@@ -273,16 +278,16 @@ func WithOutput(size uint, interval, timeout time.Duration) Option {
 	}
 }
 
-// WithStateInitializer sets up the state initializer for the pool.
-func WithStateInitializer(initializer func(RoutineID) interface{}) Option {
+// WithStateInitialiser sets up the state initializer for the pool.
+func WithStateInitialiser(initializer func(RoutineID) any) Option {
 	return func(opts *Options) {
 		opts.StateInitializer = initializer
 	}
 }
 
-// WithStateFinalizer sets up the state finalizer for the pool.
-func WithStateFinalizer(finalizer func(interface{})) Option {
+// WithStateFinaliser sets up the state finaliser for the pool.
+func WithStateFinaliser(finaliser func(any)) Option {
 	return func(opts *Options) {
-		opts.StateFinalizer = finalizer
+		opts.StateFinaliser = finaliser
 	}
 }

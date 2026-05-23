@@ -97,8 +97,8 @@ func NewShellPool(ctx context.Context,
 		return session.Execute(ctx, command)
 	}
 
-	// Add state initializer and finalizer to the options.
-	initializer := func(id RoutineID) interface{} {
+	// Add state initializer and finaliser to the options.
+	initializer := func(id RoutineID) any {
 		session, err := NewInteractiveShellSession(shellPath)
 		if err != nil {
 			return nil
@@ -106,15 +106,15 @@ func NewShellPool(ctx context.Context,
 		return session
 	}
 
-	finalizer := func(state interface{}) {
+	finaliser := func(state any) {
 		if session, ok := state.(ShellSession); ok {
 			_ = session.Close()
 		}
 	}
 
 	opts := append(options,
-		WithStateInitializer(initializer),
-		WithStateFinalizer(finalizer),
+		WithStateInitialiser(initializer),
+		WithStateFinaliser(finaliser),
 	)
 
 	base, err := NewManifoldStatePool(ctx, mf, wg, opts...)

@@ -84,7 +84,7 @@ func (p *ManifoldStatePool[I, O, S]) Source(ctx context.Context,
 
 // Conclude signifies to the worker pool that no more work will be submitted.
 func (p *ManifoldStatePool[I, O, S]) Conclude(ctx context.Context) {
-	conclude[I, O](ctx, &p.basePool, &p.functionalPool)
+	conclude(ctx, &p.basePool, &p.functionalPool)
 }
 
 func manifoldStateFuncResponse[I, O, S any](ctx context.Context,

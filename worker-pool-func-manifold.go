@@ -97,7 +97,7 @@ func (p *ManifoldFuncPool[I, O]) Source(ctx context.Context,
 // Failure to close the channel will again result in a never ending
 // worker pool.
 func (p *ManifoldFuncPool[I, O]) Conclude(ctx context.Context) {
-	conclude[I, O](ctx, &p.basePool, &p.functionalPool)
+	conclude(ctx, &p.basePool, &p.functionalPool)
 }
 
 func manifoldFuncResponse[I, O any](ctx context.Context,

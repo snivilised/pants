@@ -77,7 +77,7 @@ const nowTimeUpdateInterval = 500 * time.Millisecond
 // Logger is used for logging formatted messages.
 type Logger interface {
 	// Printf must have the same semantics as log.Printf.
-	Printf(format string, args ...interface{})
+	Printf(format string, args ...any)
 }
 
 type (
@@ -100,13 +100,13 @@ type (
 
 	// InputParam the input passed to the function for func based
 	// worker pools.
-	InputParam interface{}
+	InputParam any
 
 	// InputEnvelope the input wrapper with an input
 	InputEnvelope interface {
 		WorkEnvelope
 		Param() InputParam
-		State() interface{}
+		State() any
 	}
 
 	// PoolFunc represents the job function executed by func based
@@ -123,8 +123,8 @@ type (
 	// worker pools.
 	Envelope struct {
 		ID    RoutineID
-		Input interface{}
-		state interface{}
+		Input any
+		state any
 	}
 
 	// TaskEnvelope is the underlying wrapper used for task based
@@ -143,7 +143,7 @@ func (e Envelope) Param() InputParam {
 	return e.Input
 }
 
-func (e Envelope) State() interface{} {
+func (e Envelope) State() any {
 	return e.state
 }
 

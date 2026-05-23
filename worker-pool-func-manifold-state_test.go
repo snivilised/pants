@@ -39,12 +39,12 @@ var _ = Describe("ManifoldStatePool", func() {
 		poolSize := 2
 		jobCount := 10
 
-		initializer := func(id pants.RoutineID) interface{} {
+		initializer := func(id pants.RoutineID) any {
 			atomic.AddInt32(&initCount, 1)
 			return &mockState{id: id}
 		}
 
-		finalizer := func(state interface{}) {
+		finaliser := func(state any) {
 			atomic.AddInt32(&finalCount, 1)
 		}
 
@@ -55,8 +55,8 @@ var _ = Describe("ManifoldStatePool", func() {
 
 		pool, err := pants.NewManifoldStatePool(ctx, mf, &wg,
 			pants.WithSize(uint(poolSize)),
-			pants.WithStateInitializer(initializer),
-			pants.WithStateFinalizer(finalizer),
+			pants.WithStateInitialiser(initializer),
+			pants.WithStateFinaliser(finaliser),
 			pants.WithOutput(uint(jobCount), time.Microsecond*100, time.Second),
 		)
 		Expect(err).NotTo(HaveOccurred())
@@ -79,7 +79,7 @@ var _ = Describe("ManifoldStatePool", func() {
 
 		// Release the pool to trigger finalizers
 		pool.Release(ctx)
-		
+
 		// The number of finalizers should match the number of initializers
 		Eventually(func() int32 {
 			return atomic.LoadInt32(&finalCount)

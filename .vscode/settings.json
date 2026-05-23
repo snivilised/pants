@@ -26,6 +26,7 @@
     "extendio",
     "fasthttp",
     "fieldalignment",
+    "Finaliser",
     "fortytw",
     "goconst",
     "gocritic",

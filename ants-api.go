@@ -100,9 +100,9 @@ var (
 	// to number of CPUs available.
 	WithSize = ants.WithSize
 
-	// WithStateInitializer sets up the state initializer for the pool.
-	WithStateInitializer = ants.WithStateInitializer
+	// WithStateInitialiser sets up the state initializer for the pool.
+	WithStateInitialiser = ants.WithStateInitialiser
 
-	// WithStateFinalizer sets up the state finalizer for the pool.
-	WithStateFinalizer = ants.WithStateFinalizer
+	// WithStateFinaliser sets up the state finaliser for the pool.
+	WithStateFinaliser = ants.WithStateFinaliser
 )
