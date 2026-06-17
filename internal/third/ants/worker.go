@@ -92,7 +92,7 @@ func (w *goWorker) sendTask(ctx context.Context, fn TaskFunc) {
 	select {
 	case <-ctx.Done():
 	case w.taskCh <- &TaskEnvelope{
-		ID:   w.id,
+		id:   w.id,
 		Task: fn,
 	}:
 	}
