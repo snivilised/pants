@@ -122,7 +122,7 @@ type (
 	// Envelope is the underlying wrapper used for func based (with input)
 	// worker pools.
 	Envelope struct {
-		ID    RoutineID
+		id    RoutineID
 		Input any
 		state any
 	}
@@ -130,13 +130,13 @@ type (
 	// TaskEnvelope is the underlying wrapper used for task based
 	// worker pools.
 	TaskEnvelope struct {
-		ID   RoutineID
+		id   RoutineID
 		Task TaskFunc
 	}
 )
 
 func (e Envelope) WorkerID() RoutineID {
-	return e.ID
+	return e.id
 }
 
 func (e Envelope) Param() InputParam {
@@ -148,7 +148,7 @@ func (e Envelope) State() any {
 }
 
 func (e TaskEnvelope) WorkerID() RoutineID {
-	return e.ID
+	return e.id
 }
 
 func (e TaskEnvelope) Func() TaskFunc {

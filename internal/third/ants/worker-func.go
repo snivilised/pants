@@ -113,7 +113,7 @@ func (w *goWorkerWithFunc) sendParam(ctx context.Context, job InputParam) {
 	select {
 	case <-ctx.Done():
 	case w.inputCh <- &Envelope{
-		ID:    w.id,
+		id:    w.id,
 		Input: job,
 	}:
 	}
